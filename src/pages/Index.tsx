@@ -2,6 +2,7 @@ import { AppLayout } from "@/components/layouts/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, GraduationCap, BookOpen, BarChart3, TrendingUp, TrendingDown } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useNavigate } from "react-router-dom";
 
 const stats = [
   {
@@ -60,12 +61,22 @@ const recentActivities = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <AppLayout>
       <div className="space-y-8 animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <Card key={stat.title} className="hover:shadow-lg transition-shadow duration-200">
+            <Card 
+              key={stat.title} 
+              className="hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+              onClick={() => {
+                if (stat.title === "Total Students") {
+                  navigate('/onboarding');
+                }
+              }}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium text-gray-500">
                   {stat.title}
