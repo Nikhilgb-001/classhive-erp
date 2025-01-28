@@ -46,7 +46,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupContent>
+              <SidebarGroupContent className="[&_li]:list-none">
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild>
