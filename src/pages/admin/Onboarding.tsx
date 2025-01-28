@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Plus } from "lucide-react";
 import { format } from "date-fns";
+import { ArrowLeft, Plus } from "lucide-react";
 
 const AdminOnboarding = () => {
   const navigate = useNavigate();
@@ -30,43 +30,43 @@ const AdminOnboarding = () => {
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              className="p-0 hover:bg-transparent text-white"
+              className="p-0 hover:bg-transparent text-gray-900"
               onClick={() => navigate('/admin')}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-semibold text-white">School Onboarding</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">School Onboarding</h1>
           </div>
           <Button 
             onClick={() => navigate('/admin/onboarding/new')}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="bg-primary hover:bg-primary-600 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Onboarding
           </Button>
         </div>
 
-        <div className="rounded-md border border-gray-800 bg-[#1E2433] overflow-x-auto">
+        <div className="rounded-md border border-gray-200 bg-white overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-800">
-                <TableHead className="text-gray-300">SCHOOL NAME</TableHead>
-                <TableHead className="text-gray-300">ADMIN NAME</TableHead>
-                <TableHead className="text-gray-300">STATUS</TableHead>
-                <TableHead className="text-gray-300">CREATED AT</TableHead>
-                <TableHead className="text-gray-300">ACTIONS</TableHead>
+              <TableRow className="border-gray-200">
+                <TableHead className="text-gray-700">SCHOOL NAME</TableHead>
+                <TableHead className="text-gray-700">ADMIN NAME</TableHead>
+                <TableHead className="text-gray-700">STATUS</TableHead>
+                <TableHead className="text-gray-700">CREATED AT</TableHead>
+                <TableHead className="text-gray-700">ACTIONS</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-300">Loading...</TableCell>
+                  <TableCell colSpan={5} className="text-center text-gray-700">Loading...</TableCell>
                 </TableRow>
               ) : schools && schools.length > 0 ? (
                 schools.map((school) => (
-                  <TableRow key={school.id} className="border-gray-800">
-                    <TableCell className="text-gray-200">{school.school_name}</TableCell>
-                    <TableCell className="text-gray-200">{school.admin_name}</TableCell>
+                  <TableRow key={school.id} className="border-gray-200">
+                    <TableCell className="text-gray-900">{school.school_name}</TableCell>
+                    <TableCell className="text-gray-900">{school.admin_name}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         school.status === 'completed' 
@@ -76,13 +76,13 @@ const AdminOnboarding = () => {
                         {school.status || 'pending'}
                       </span>
                     </TableCell>
-                    <TableCell className="text-gray-200">
+                    <TableCell className="text-gray-900">
                       {format(new Date(school.created_at), 'MM/dd/yyyy')}
                     </TableCell>
                     <TableCell>
                       <Button 
                         variant="ghost" 
-                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                        className="text-primary hover:text-primary-600 hover:bg-primary-50"
                         onClick={() => navigate(`/admin/onboarding/${school.id}/edit`)}
                       >
                         Edit
@@ -92,7 +92,7 @@ const AdminOnboarding = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-300">No schools found</TableCell>
+                  <TableCell colSpan={5} className="text-center text-gray-700">No schools found</TableCell>
                 </TableRow>
               )}
             </TableBody>

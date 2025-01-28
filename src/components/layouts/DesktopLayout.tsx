@@ -40,8 +40,8 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <Sidebar className="bg-[#1A1F2C] border-r border-gray-800 fixed h-screen">
-          <div className="px-6 py-4 border-b border-gray-800">
+        <Sidebar className="bg-primary border-r border-gray-200 fixed h-screen">
+          <div className="px-6 py-4 border-b border-gray-200">
             <h1 className="text-2xl font-bold text-white">Instaclass</h1>
           </div>
           <SidebarContent>
@@ -52,10 +52,10 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
                     <SidebarMenuButton asChild>
                       <a 
                         href={item.href} 
-                        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-200"
+                        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-primary-600/50 transition-colors duration-200"
                       >
                         <item.icon className="h-5 w-5" style={{ color: item.color }} />
-                        <span className="text-gray-200">{item.label}</span>
+                        <span className="text-white">{item.label}</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -65,14 +65,14 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 ml-64">
-          <header className="bg-[#1A1F2C] border-b border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-            <h1 className="text-xl font-semibold text-white">Nypunya</h1>
+          <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+            <h1 className="text-xl font-semibold text-gray-900">Nypunya</h1>
             <div className="flex items-center gap-4">
-              <Bell className="h-5 w-5 text-gray-300" />
-              <span className="text-gray-200">Anil</span>
+              <Bell className="h-5 w-5 text-gray-600" />
+              <span className="text-gray-900">Anil</span>
             </div>
           </header>
-          <main className="p-6 w-full bg-[#1A1F2C] min-h-[calc(100vh-4rem)]">
+          <main className="p-6 w-full bg-secondary min-h-[calc(100vh-4rem)]">
             {children}
           </main>
         </div>
