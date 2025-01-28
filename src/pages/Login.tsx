@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
@@ -11,14 +11,14 @@ export default function Login() {
     const signIn = async () => {
       try {
         console.log("Attempting to sign in...");
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: "developer@instaclass.in",
           password: "password",
         });
 
         if (error) throw error;
 
-        console.log("Sign in successful");
+        console.log("Sign in successful:", data);
         toast({
           title: "Login successful",
           description: "Welcome back!",
