@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,9 @@ export const SchoolOnboardingForm = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [session, setSession] = useState(null);
+
   const [formData, setFormData] = useState({
     schoolName: "",
     schoolCode: "",
@@ -25,6 +28,30 @@ export const SchoolOnboardingForm = () => {
     founderPhone: "",
   });
 
+  useEffect(() => {
+    // Check for active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to continue.",
+          variant: "destructive",
+        });
+        navigate('/login');
+      }
+    });
+
+    // Set up auth state listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate, toast]);
+
   const generateSchoolAppId = () => {
     const timestamp = Date.now().toString().slice(-6);
     const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
@@ -33,9 +60,21 @@ export const SchoolOnboardingForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
     const schoolAppId = generateSchoolAppId();
     
     try {
+      console.log('Attempting to insert school with session:', session);
       const { error } = await supabase
         .from('schools')
         .insert([
@@ -55,7 +94,10 @@ export const SchoolOnboardingForm = () => {
           }
         ]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting school:', error);
+        throw error;
+      }
 
       toast({
         title: "School Onboarded Successfully",
@@ -75,6 +117,8 @@ export const SchoolOnboardingForm = () => {
         description: "Failed to onboard school. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,6 +126,10 @@ export const SchoolOnboardingForm = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -202,7 +250,9 @@ export const SchoolOnboardingForm = () => {
           />
         </div>
       </div>
-      <Button type="submit" className="w-full">Onboard School</Button>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Onboarding..." : "Onboard School"}
+      </Button>
     </form>
   );
 };
