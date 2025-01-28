@@ -39,8 +39,8 @@ const menuItems = [
 export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-[#1A1F2C]">
-        <Sidebar>
+      <div className="min-h-screen flex w-full">
+        <Sidebar className="bg-[#1A1F2C]">
           <div className="px-6 py-4 border-b border-gray-800">
             <h1 className="text-2xl font-bold text-white">Instaclass</h1>
           </div>
@@ -64,7 +64,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
             </SidebarGroup>
           </SidebarContent>
         </Sidebar>
-        <main className="flex-1 p-8 overflow-auto">
+        <main className="flex-1 p-8 overflow-auto bg-white">
           {children}
         </main>
       </div>

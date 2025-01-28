@@ -41,7 +41,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#1A1F2C]">
+    <div className="min-h-screen">
       <header className="bg-[#1A1F2C] border-b border-gray-800 px-4 py-3 flex items-center justify-between">
         <h1 className="text-xl font-bold text-white">Instaclass</h1>
         <Sheet open={open} onOpenChange={setOpen}>
@@ -67,7 +67,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
           </SheetContent>
         </Sheet>
       </header>
-      <main className="p-4">
+      <main className="p-4 bg-white">
         {children}
       </main>
       <nav className="fixed bottom-0 left-0 right-0 bg-[#1A1F2C] border-t border-gray-800 py-2 px-6 flex justify-around">
