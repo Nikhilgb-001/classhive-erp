@@ -42,7 +42,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="min-h-screen flex w-full">
         <Sidebar className="bg-[#1A1F2C]">
           <div className="px-6 py-4 border-b border-gray-800">
-            <h1 className="text-2xl font-bold text-white">Nypunya</h1>
+            <h1 className="text-2xl font-bold text-white">Instaclass</h1>
           </div>
           <SidebarContent>
             <SidebarGroup>
@@ -65,14 +65,14 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 flex flex-col">
-          <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 right-0 left-[280px] z-10">
             <h1 className="text-xl font-semibold text-gray-900">Nypunya</h1>
             <div className="flex items-center gap-4">
               <Bell className="h-5 w-5 text-gray-500" />
               <span className="text-gray-700">Anil</span>
             </div>
           </header>
-          <main className="flex-1 p-8 overflow-auto bg-white">
+          <main className="flex-1 p-8 overflow-auto bg-white mt-[73px]">
             {children}
           </main>
         </div>
