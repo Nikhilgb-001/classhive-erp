@@ -63,11 +63,6 @@ const Index = () => {
   return (
     <AppLayout>
       <div className="space-y-8 animate-fade-in">
-        <div className="flex flex-col space-y-1.5">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome to Instaclass</h1>
-          <p className="text-gray-500">Your school management dashboard</p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
             <Card key={stat.title} className="hover:shadow-lg transition-shadow duration-200">
