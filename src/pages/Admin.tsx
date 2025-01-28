@@ -4,8 +4,6 @@ import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 const AdminFeatureCard = ({ 
@@ -37,32 +35,13 @@ const AdminFeatureCard = ({
     >
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
-          <div>
+          <div className="w-full">
             <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
               <Icon className="w-6 h-6" style={{ color: iconColor }} />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-            <p className="text-gray-500">{description}</p>
+            <p className="text-gray-500 text-left">{description}</p>
           </div>
-          {href === "/admin/onboarding" && (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button 
-                  className="bg-indigo-600 hover:bg-indigo-700"
-                  onClick={(e) => e.stopPropagation()} // Prevent card click when clicking the button
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  New School Onboarding
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Onboard New School</DialogTitle>
-                </DialogHeader>
-                <SchoolOnboardingForm />
-              </DialogContent>
-            </Dialog>
-          )}
         </div>
         {children}
       </CardContent>
@@ -96,7 +75,7 @@ const Admin = () => {
     {
       icon: Rocket,
       title: "Onboarding",
-      description: "Manage school onboarding process",
+      description: "Manage school onboarding process.",
       href: "/admin/onboarding",
       iconColor: "#A78BFA"
     },
