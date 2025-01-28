@@ -1,14 +1,20 @@
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ArrowLeft, Download, Pencil, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const AdminOnboarding = () => {
   const navigate = useNavigate();
+  const [selectedSchool, setSelectedSchool] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
   const { data: schools, isLoading } = useQuery({
     queryKey: ['schools'],
@@ -22,6 +28,58 @@ const AdminOnboarding = () => {
       return data;
     }
   });
+
+  const handleExportCSV = () => {
+    if (!schools || schools.length === 0) {
+      toast.error("No data to export");
+      return;
+    }
+
+    // Convert schools data to CSV format
+    const headers = [
+      "School Name",
+      "School Code",
+      "School App ID",
+      "School Address",
+      "Admin Name",
+      "Admin Email",
+      "Admin Phone",
+      "Billing Contact Name",
+      "Billing Email",
+      "Billing Phone",
+      "Founder Name",
+      "Founder Phone",
+      "Status",
+      "Created At"
+    ].join(",");
+
+    const csvData = schools.map(school => [
+      school.school_name,
+      school.school_code,
+      school.school_app_id,
+      school.school_address,
+      school.admin_name,
+      school.admin_email,
+      school.admin_phone,
+      school.billing_contact_name,
+      school.billing_email,
+      school.billing_phone,
+      school.founder_name,
+      school.founder_phone,
+      school.status,
+      format(new Date(school.created_at), 'MM/dd/yyyy')
+    ].map(field => `"${field || ''}"`).join(","));
+
+    const csvContent = [headers, ...csvData].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `school_onboarding_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    
+    toast.success("CSV file downloaded successfully");
+  };
 
   return (
     <AppLayout>
@@ -37,13 +95,23 @@ const AdminOnboarding = () => {
             </Button>
             <h1 className="text-2xl font-semibold text-gray-900">School Onboarding</h1>
           </div>
-          <Button 
-            onClick={() => navigate('/admin/onboarding/new')}
-            className="bg-primary hover:bg-primary-600 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Onboarding
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              variant="outline"
+              onClick={handleExportCSV}
+              className="flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </Button>
+            <Button 
+              onClick={() => navigate('/admin/onboarding/new')}
+              className="bg-primary hover:bg-primary-600 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Onboarding
+            </Button>
+          </div>
         </div>
 
         <div className="rounded-md border border-gray-200 bg-white overflow-x-auto">
@@ -60,7 +128,7 @@ const AdminOnboarding = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-700">Loading...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8">Loading...</TableCell>
                 </TableRow>
               ) : schools && schools.length > 0 ? (
                 schools.map((school) => (
@@ -80,19 +148,33 @@ const AdminOnboarding = () => {
                       {format(new Date(school.created_at), 'MM/dd/yyyy')}
                     </TableCell>
                     <TableCell>
-                      <Button 
-                        variant="ghost" 
-                        className="text-primary hover:text-primary-600 hover:bg-primary-50"
-                        onClick={() => navigate(`/admin/onboarding/${school.id}/edit`)}
-                      >
-                        Edit
-                      </Button>
+                      <Dialog open={isEditDialogOpen && selectedSchool?.id === school.id} onOpenChange={(open) => {
+                        setIsEditDialogOpen(open);
+                        if (!open) setSelectedSchool(null);
+                      }}>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            className="text-primary hover:text-primary-600 hover:bg-primary-50"
+                            onClick={() => setSelectedSchool(school)}
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Edit School Details</DialogTitle>
+                          </DialogHeader>
+                          <SchoolOnboardingForm initialData={selectedSchool} />
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-700">No schools found</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8">No schools found</TableCell>
                 </TableRow>
               )}
             </TableBody>
