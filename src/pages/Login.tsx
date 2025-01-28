@@ -10,11 +10,14 @@ export default function Login() {
   useEffect(() => {
     const signIn = async () => {
       try {
-        console.log("Attempting to sign in...");
+        console.log("Starting sign in process...");
+        
         const { data, error } = await supabase.auth.signInWithPassword({
           email: "developer@instaclass.in",
           password: "password",
         });
+
+        console.log("Sign in response:", { data, error });
 
         if (error) throw error;
 
@@ -26,7 +29,13 @@ export default function Login() {
 
         navigate("/admin/onboarding/new");
       } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login error details:", {
+          message: error.message,
+          code: error.code,
+          status: error.status,
+          details: error
+        });
+        
         toast({
           title: "Login failed",
           description: error.message || "Please check your credentials and try again.",
