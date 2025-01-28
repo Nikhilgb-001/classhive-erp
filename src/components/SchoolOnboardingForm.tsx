@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const SchoolOnboardingForm = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     schoolName: "",
     schoolCode: "",
@@ -26,16 +29,63 @@ export const SchoolOnboardingForm = () => {
     return `SCH-${timestamp}-${randomNum}`;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const schoolAppId = generateSchoolAppId();
     
-    console.log('School onboarding data:', { ...formData, schoolAppId });
-    
-    toast({
-      title: "School Onboarded Successfully",
-      description: `School App ID: ${schoolAppId}`,
-    });
+    try {
+      const { error } = await supabase
+        .from('schools')
+        .insert([
+          {
+            school_app_id: schoolAppId,
+            school_name: formData.schoolName,
+            school_code: formData.schoolCode,
+            school_address: formData.schoolAddress,
+            admin_name: formData.adminName,
+            admin_email: formData.adminEmail,
+            admin_phone: formData.adminPhone,
+            billing_contact_name: formData.billingContactName,
+            billing_phone: formData.billingPhone,
+            billing_email: formData.billingEmail,
+            founder_name: formData.founderName,
+            founder_phone: formData.founderPhone,
+          }
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "School Onboarded Successfully",
+        description: `School App ID: ${schoolAppId}`,
+      });
+
+      // Reset form
+      setFormData({
+        schoolName: "",
+        schoolCode: "",
+        schoolAddress: "",
+        adminName: "",
+        adminEmail: "",
+        adminPhone: "",
+        billingContactName: "",
+        billingPhone: "",
+        billingEmail: "",
+        founderName: "",
+        founderPhone: "",
+      });
+
+      // Refresh schools list
+      queryClient.invalidateQueries({ queryKey: ['schools'] });
+
+    } catch (error) {
+      console.error('Error onboarding school:', error);
+      toast({
+        title: "Error",
+        description: "Failed to onboard school. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
