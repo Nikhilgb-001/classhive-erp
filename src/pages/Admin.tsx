@@ -1,9 +1,6 @@
-import { School, Users, FileText, Rocket, Lock, Plus } from "lucide-react";
+import { Users, FileText, Rocket, Lock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AppLayout } from "@/components/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
 import { useNavigate } from "react-router-dom";
 
 const AdminFeatureCard = ({ 
@@ -51,13 +48,6 @@ const AdminFeatureCard = ({
 
 const Admin = () => {
   const features = [
-    {
-      icon: School,
-      title: "Schools",
-      description: "Manage schools and their configurations",
-      href: "/admin/schools",
-      iconColor: "#4F46E5"
-    },
     {
       icon: Users,
       title: "Users",
