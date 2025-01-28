@@ -81,6 +81,23 @@ const AdminOnboarding = () => {
     toast.success("CSV file downloaded successfully");
   };
 
+  // Map database fields to form fields
+  const mapSchoolToFormData = (school) => {
+    return {
+      schoolName: school.school_name,
+      schoolCode: school.school_code,
+      schoolAddress: school.school_address,
+      adminName: school.admin_name,
+      adminEmail: school.admin_email,
+      adminPhone: school.admin_phone,
+      billingContactName: school.billing_contact_name,
+      billingPhone: school.billing_phone,
+      billingEmail: school.billing_email,
+      founderName: school.founder_name,
+      founderPhone: school.founder_phone,
+    };
+  };
+
   return (
     <AppLayout>
       <div className="max-w-[1400px] mx-auto space-y-6">
@@ -156,7 +173,12 @@ const AdminOnboarding = () => {
                           <Button 
                             variant="ghost" 
                             className="text-primary hover:text-primary-600 hover:bg-primary-50"
-                            onClick={() => setSelectedSchool(school)}
+                            onClick={() => {
+                              const formData = mapSchoolToFormData(school);
+                              console.log('Mapped form data:', formData);
+                              setSelectedSchool(formData);
+                              setIsEditDialogOpen(true);
+                            }}
                           >
                             <Pencil className="h-4 w-4 mr-2" />
                             Edit
