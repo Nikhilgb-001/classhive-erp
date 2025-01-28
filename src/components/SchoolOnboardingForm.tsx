@@ -7,14 +7,32 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
-export const SchoolOnboardingForm = () => {
+interface SchoolFormData {
+  schoolName: string;
+  schoolCode: string;
+  schoolAddress: string;
+  adminName: string;
+  adminEmail: string;
+  adminPhone: string;
+  billingContactName: string;
+  billingPhone: string;
+  billingEmail: string;
+  founderName: string;
+  founderPhone: string;
+}
+
+interface SchoolOnboardingFormProps {
+  initialData?: SchoolFormData;
+}
+
+export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SchoolFormData>({
     schoolName: "",
     schoolCode: "",
     schoolAddress: "",
@@ -27,6 +45,24 @@ export const SchoolOnboardingForm = () => {
     founderName: "",
     founderPhone: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        schoolName: initialData.schoolName || "",
+        schoolCode: initialData.schoolCode || "",
+        schoolAddress: initialData.schoolAddress || "",
+        adminName: initialData.adminName || "",
+        adminEmail: initialData.adminEmail || "",
+        adminPhone: initialData.adminPhone || "",
+        billingContactName: initialData.billingContactName || "",
+        billingPhone: initialData.billingPhone || "",
+        billingEmail: initialData.billingEmail || "",
+        founderName: initialData.founderName || "",
+        founderPhone: initialData.founderPhone || "",
+      });
+    }
+  }, [initialData]);
 
   useEffect(() => {
     // Check for active session
@@ -74,33 +110,34 @@ export const SchoolOnboardingForm = () => {
     const schoolAppId = generateSchoolAppId();
     
     try {
-      console.log('Attempting to insert school with session:', session);
+      console.log('Attempting to insert/update school with session:', session);
+      
+      const schoolData = {
+        school_app_id: schoolAppId,
+        school_name: formData.schoolName,
+        school_code: formData.schoolCode,
+        school_address: formData.schoolAddress,
+        admin_name: formData.adminName,
+        admin_email: formData.adminEmail,
+        admin_phone: formData.adminPhone,
+        billing_contact_name: formData.billingContactName,
+        billing_phone: formData.billingPhone,
+        billing_email: formData.billingEmail,
+        founder_name: formData.founderName,
+        founder_phone: formData.founderPhone,
+      };
+
       const { error } = await supabase
         .from('schools')
-        .insert([
-          {
-            school_app_id: schoolAppId,
-            school_name: formData.schoolName,
-            school_code: formData.schoolCode,
-            school_address: formData.schoolAddress,
-            admin_name: formData.adminName,
-            admin_email: formData.adminEmail,
-            admin_phone: formData.adminPhone,
-            billing_contact_name: formData.billingContactName,
-            billing_phone: formData.billingPhone,
-            billing_email: formData.billingEmail,
-            founder_name: formData.founderName,
-            founder_phone: formData.founderPhone,
-          }
-        ]);
+        .insert([schoolData]);
 
       if (error) {
-        console.error('Error inserting school:', error);
+        console.error('Error inserting/updating school:', error);
         throw error;
       }
 
       toast({
-        title: "School Onboarded Successfully",
+        title: initialData ? "School Updated Successfully" : "School Onboarded Successfully",
         description: `School App ID: ${schoolAppId}`,
       });
 
@@ -251,7 +288,7 @@ export const SchoolOnboardingForm = () => {
         </div>
       </div>
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Onboarding..." : "Onboard School"}
+        {isLoading ? (initialData ? "Updating..." : "Onboarding...") : (initialData ? "Update School" : "Onboard School")}
       </Button>
     </form>
   );
