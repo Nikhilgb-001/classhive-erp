@@ -9,32 +9,32 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const mobileMenuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: Users, label: "Students", href: "/students" },
-  { icon: GraduationCap, label: "Teachers", href: "/teachers" },
-  { icon: BookOpen, label: "Classes", href: "/classes" },
-  { icon: ClipboardCheck, label: "Attendance", href: "/attendance" },
-  { icon: FileText, label: "Assignments", href: "/assignments" },
-  { icon: Megaphone, label: "Circulars", href: "/circulars" },
-  { icon: CalendarDays, label: "Calendar", href: "/calendar" },
-  { icon: Book, label: "Homework", href: "/homework" },
-  { icon: StickyNote, label: "Notice Board", href: "/notice-board" },
-  { icon: Clock, label: "Time Table", href: "/time-table" },
-  { icon: TestTube, label: "Tests", href: "/tests" },
-  { icon: Users2, label: "Meetings", href: "/meetings" },
-  { icon: MessageSquare, label: "Chat with Staff", href: "/chat" },
-  { icon: CalendarMinus, label: "Leave Request", href: "/leave-request" },
-  { icon: DollarSign, label: "Fee Details", href: "/fee-details" },
-  { icon: PartyPopper, label: "Events", href: "/events" },
-  { icon: Image, label: "Gallery", href: "/gallery" },
-  { icon: ChartBar, label: "Results", href: "/results" },
-  { icon: Library, label: "Library", href: "/library" },
-  { icon: Bell, label: "Notifications", href: "/notifications" },
-  { icon: Documentation, label: "Documentation", href: "/documentation" },
-  { icon: UserCog, label: "Admin", href: "/admin" },
-  { icon: School, label: "School Admin", href: "/school-admin" },
-  { icon: Settings, label: "Settings", href: "/settings" },
-  { icon: LogOut, label: "Logout", href: "/logout" }
+  { icon: LayoutDashboard, label: "Dashboard", href: "/", color: "#60A5FA" },
+  { icon: Users, label: "Students", href: "/students", color: "#34D399" },
+  { icon: GraduationCap, label: "Teachers", href: "/teachers", color: "#F472B6" },
+  { icon: BookOpen, label: "Classes", href: "/classes", color: "#A78BFA" },
+  { icon: ClipboardCheck, label: "Attendance", href: "/attendance", color: "#FBBF24" },
+  { icon: FileText, label: "Assignments", href: "/assignments", color: "#60A5FA" },
+  { icon: Megaphone, label: "Circulars", href: "/circulars", color: "#F87171" },
+  { icon: CalendarDays, label: "Calendar", href: "/calendar", color: "#34D399" },
+  { icon: Book, label: "Homework", href: "/homework", color: "#A78BFA" },
+  { icon: StickyNote, label: "Notice Board", href: "/notice-board", color: "#FBBF24" },
+  { icon: Clock, label: "Time Table", href: "/time-table", color: "#F472B6" },
+  { icon: TestTube, label: "Tests", href: "/tests", color: "#60A5FA" },
+  { icon: Users2, label: "Meetings", href: "/meetings", color: "#34D399" },
+  { icon: MessageSquare, label: "Chat with Staff", href: "/chat", color: "#F87171" },
+  { icon: CalendarMinus, label: "Leave Request", href: "/leave-request", color: "#A78BFA" },
+  { icon: DollarSign, label: "Fee Details", href: "/fee-details", color: "#FBBF24" },
+  { icon: PartyPopper, label: "Events", href: "/events", color: "#F472B6" },
+  { icon: Image, label: "Gallery", href: "/gallery", color: "#60A5FA" },
+  { icon: ChartBar, label: "Results", href: "/results", color: "#34D399" },
+  { icon: Library, label: "Library", href: "/library", color: "#F87171" },
+  { icon: Bell, label: "Notifications", href: "/notifications", color: "#A78BFA" },
+  { icon: Documentation, label: "Documentation", href: "/documentation", color: "#FBBF24" },
+  { icon: UserCog, label: "Admin", href: "/admin", color: "#F472B6" },
+  { icon: School, label: "School Admin", href: "/school-admin", color: "#60A5FA" },
+  { icon: Settings, label: "Settings", href: "/settings", color: "#34D399" },
+  { icon: LogOut, label: "Logout", href: "/logout", color: "#F87171" }
 ];
 
 export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
@@ -59,7 +59,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/50 rounded-lg text-gray-200"
                   onClick={() => setOpen(false)}
                 >
-                  <item.icon className="h-5 w-5 text-gray-400" />
+                  <item.icon className="h-5 w-5" style={{ color: item.color }} />
                   <span>{item.label}</span>
                 </a>
               ))}
@@ -77,7 +77,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
             href={item.href}
             className="flex flex-col items-center gap-1 text-gray-400 hover:text-white"
           >
-            <item.icon className="h-6 w-6" />
+            <item.icon className="h-6 w-6" style={{ color: item.color }} />
             <span className="text-xs">{item.label}</span>
           </a>
         ))}

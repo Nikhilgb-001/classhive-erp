@@ -8,32 +8,32 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: Users, label: "Students", href: "/students" },
-  { icon: GraduationCap, label: "Teachers", href: "/teachers" },
-  { icon: BookOpen, label: "Classes", href: "/classes" },
-  { icon: ClipboardCheck, label: "Attendance", href: "/attendance" },
-  { icon: FileText, label: "Assignments", href: "/assignments" },
-  { icon: Megaphone, label: "Circulars", href: "/circulars" },
-  { icon: CalendarDays, label: "Calendar", href: "/calendar" },
-  { icon: Book, label: "Homework", href: "/homework" },
-  { icon: StickyNote, label: "Notice Board", href: "/notice-board" },
-  { icon: Clock, label: "Time Table", href: "/time-table" },
-  { icon: TestTube, label: "Tests", href: "/tests" },
-  { icon: Users2, label: "Meetings", href: "/meetings" },
-  { icon: MessageSquare, label: "Chat with Staff", href: "/chat" },
-  { icon: CalendarMinus, label: "Leave Request", href: "/leave-request" },
-  { icon: DollarSign, label: "Fee Details", href: "/fee-details" },
-  { icon: PartyPopper, label: "Events", href: "/events" },
-  { icon: Image, label: "Gallery", href: "/gallery" },
-  { icon: ChartBar, label: "Results", href: "/results" },
-  { icon: Library, label: "Library", href: "/library" },
-  { icon: Bell, label: "Notifications", href: "/notifications" },
-  { icon: Documentation, label: "Documentation", href: "/documentation" },
-  { icon: UserCog, label: "Admin", href: "/admin" },
-  { icon: School, label: "School Admin", href: "/school-admin" },
-  { icon: Settings, label: "Settings", href: "/settings" },
-  { icon: LogOut, label: "Logout", href: "/logout" }
+  { icon: LayoutDashboard, label: "Dashboard", href: "/", color: "#60A5FA" }, // Blue
+  { icon: Users, label: "Students", href: "/students", color: "#34D399" }, // Green
+  { icon: GraduationCap, label: "Teachers", href: "/teachers", color: "#F472B6" }, // Pink
+  { icon: BookOpen, label: "Classes", href: "/classes", color: "#A78BFA" }, // Purple
+  { icon: ClipboardCheck, label: "Attendance", href: "/attendance", color: "#FBBF24" }, // Yellow
+  { icon: FileText, label: "Assignments", href: "/assignments", color: "#60A5FA" }, // Blue
+  { icon: Megaphone, label: "Circulars", href: "/circulars", color: "#F87171" }, // Red
+  { icon: CalendarDays, label: "Calendar", href: "/calendar", color: "#34D399" }, // Green
+  { icon: Book, label: "Homework", href: "/homework", color: "#A78BFA" }, // Purple
+  { icon: StickyNote, label: "Notice Board", href: "/notice-board", color: "#FBBF24" }, // Yellow
+  { icon: Clock, label: "Time Table", href: "/time-table", color: "#F472B6" }, // Pink
+  { icon: TestTube, label: "Tests", href: "/tests", color: "#60A5FA" }, // Blue
+  { icon: Users2, label: "Meetings", href: "/meetings", color: "#34D399" }, // Green
+  { icon: MessageSquare, label: "Chat with Staff", href: "/chat", color: "#F87171" }, // Red
+  { icon: CalendarMinus, label: "Leave Request", href: "/leave-request", color: "#A78BFA" }, // Purple
+  { icon: DollarSign, label: "Fee Details", href: "/fee-details", color: "#FBBF24" }, // Yellow
+  { icon: PartyPopper, label: "Events", href: "/events", color: "#F472B6" }, // Pink
+  { icon: Image, label: "Gallery", href: "/gallery", color: "#60A5FA" }, // Blue
+  { icon: ChartBar, label: "Results", href: "/results", color: "#34D399" }, // Green
+  { icon: Library, label: "Library", href: "/library", color: "#F87171" }, // Red
+  { icon: Bell, label: "Notifications", href: "/notifications", color: "#A78BFA" }, // Purple
+  { icon: Documentation, label: "Documentation", href: "/documentation", color: "#FBBF24" }, // Yellow
+  { icon: UserCog, label: "Admin", href: "/admin", color: "#F472B6" }, // Pink
+  { icon: School, label: "School Admin", href: "/school-admin", color: "#60A5FA" }, // Blue
+  { icon: Settings, label: "Settings", href: "/settings", color: "#34D399" }, // Green
+  { icon: LogOut, label: "Logout", href: "/logout", color: "#F87171" } // Red
 ];
 
 export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
@@ -54,7 +54,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
                         href={item.href} 
                         className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-200"
                       >
-                        <item.icon className="h-5 w-5 text-gray-400" />
+                        <item.icon className="h-5 w-5" style={{ color: item.color }} />
                         <span className="text-gray-200">{item.label}</span>
                       </a>
                     </SidebarMenuButton>
