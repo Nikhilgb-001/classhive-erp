@@ -1,10 +1,9 @@
-import { School, Users, FileText, Rocket, Lock } from "lucide-react";
+import { School, Users, FileText, Rocket, Lock, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,24 +12,45 @@ const AdminFeatureCard = ({
   title, 
   description, 
   href,
-  iconColor = "#4F46E5"
+  iconColor = "#4F46E5",
+  children 
 }: { 
   icon: any;
   title: string;
   description: string;
   href: string;
   iconColor?: string;
+  children?: React.ReactNode;
 }) => (
   <Card className="hover:shadow-lg transition-shadow duration-200 bg-[#E5DEFF]">
-    <a href={href}>
-      <CardContent className="p-6">
-        <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
-          <Icon className="w-6 h-6" style={{ color: iconColor }} />
+    <CardContent className="p-6">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
+            <Icon className="w-6 h-6" style={{ color: iconColor }} />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+          <p className="text-gray-500">{description}</p>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-        <p className="text-gray-500">{description}</p>
-      </CardContent>
-    </a>
+        {href === "/admin/onboarding" && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-indigo-600 hover:bg-indigo-700">
+                <Plus className="w-4 h-4 mr-2" />
+                New School Onboarding
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Onboard New School</DialogTitle>
+              </DialogHeader>
+              <SchoolOnboardingForm />
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+      {children}
+    </CardContent>
   </Card>
 );
 
@@ -65,6 +85,21 @@ const SchoolCard = ({ school }: { school: any }) => (
 );
 
 const Admin = () => {
+  const { data: schools, isLoading } = useQuery({
+    queryKey: ['schools'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('schools')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  console.log('Fetched schools:', schools);
+
   const features = [
     {
       icon: School,
@@ -92,7 +127,23 @@ const Admin = () => {
       title: "Onboarding",
       description: "Manage school onboarding process",
       href: "/admin/onboarding",
-      iconColor: "#A78BFA"
+      iconColor: "#A78BFA",
+      children: (
+        <div className="mt-6 space-y-4">
+          <h4 className="text-lg font-semibold text-gray-900">Recent Onboardings</h4>
+          {isLoading ? (
+            <p>Loading schools...</p>
+          ) : schools && schools.length > 0 ? (
+            <div className="grid gap-4">
+              {schools.slice(0, 3).map((school) => (
+                <SchoolCard key={school.id} school={school} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">No schools onboarded yet.</p>
+          )}
+        </div>
+      )
     },
     {
       icon: Lock,
@@ -103,61 +154,20 @@ const Admin = () => {
     }
   ];
 
-  const { data: schools, isLoading } = useQuery({
-    queryKey: ['schools'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('schools')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  console.log('Fetched schools:', schools);
-
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Super Admin Dashboard</h1>
-            <p className="text-gray-500 mt-2">Manage your platform settings and configurations</p>
-          </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>New School Onboarding</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Onboard New School</DialogTitle>
-              </DialogHeader>
-              <SchoolOnboardingForm />
-            </DialogContent>
-          </Dialog>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Super Admin Dashboard</h1>
+          <p className="text-gray-500 mt-2">Manage your platform settings and configurations</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature) => (
-            <AdminFeatureCard key={feature.title} {...feature} />
+            <AdminFeatureCard key={feature.title} {...feature}>
+              {feature.children}
+            </AdminFeatureCard>
           ))}
-        </div>
-
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent School Onboardings</h2>
-          {isLoading ? (
-            <p>Loading schools...</p>
-          ) : schools && schools.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {schools.map((school) => (
-                <SchoolCard key={school.id} school={school} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">No schools onboarded yet.</p>
-          )}
         </div>
       </div>
     </AppLayout>
