@@ -11,6 +11,7 @@ import AdminSchools from "./pages/admin/Schools";
 import AdminUsers from "./pages/admin/Users";
 import AdminLicenses from "./pages/admin/Licenses";
 import AdminOnboarding from "./pages/admin/Onboarding";
+import NewSchoolOnboarding from "./pages/admin/NewSchoolOnboarding";
 import AdminRoleAccess from "./pages/admin/RoleAccess";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/licenses" element={<AdminLicenses />} />
           <Route path="/admin/onboarding" element={<AdminOnboarding />} />
+          <Route path="/admin/onboarding/new" element={<NewSchoolOnboarding />} />
           <Route path="/admin/role-access" element={<AdminRoleAccess />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -5,10 +5,12 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 export const SchoolOnboardingForm = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     schoolName: "",
     schoolCode: "",
@@ -60,23 +62,11 @@ export const SchoolOnboardingForm = () => {
         description: `School App ID: ${schoolAppId}`,
       });
 
-      // Reset form
-      setFormData({
-        schoolName: "",
-        schoolCode: "",
-        schoolAddress: "",
-        adminName: "",
-        adminEmail: "",
-        adminPhone: "",
-        billingContactName: "",
-        billingPhone: "",
-        billingEmail: "",
-        founderName: "",
-        founderPhone: "",
-      });
-
       // Refresh schools list
       queryClient.invalidateQueries({ queryKey: ['schools'] });
+      
+      // Navigate back to the onboarding list
+      navigate('/admin/onboarding');
 
     } catch (error) {
       console.error('Error onboarding school:', error);
