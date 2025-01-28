@@ -9,7 +9,7 @@ const NewSchoolOnboarding = () => {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center gap-4 mb-6">
           <Button 
             variant="ghost" 
@@ -20,7 +20,7 @@ const NewSchoolOnboarding = () => {
           </Button>
           <h1 className="text-2xl font-semibold">New School Onboarding</h1>
         </div>
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full max-w-[1400px] mx-auto">
           <SchoolOnboardingForm />
         </div>
       </div>
