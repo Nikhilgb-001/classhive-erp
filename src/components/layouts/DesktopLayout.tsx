@@ -39,7 +39,7 @@ const menuItems = [
 export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-white">
+      <div className="min-h-screen w-full bg-white">
         <Sidebar className="bg-[#1A1F2C] fixed h-full">
           <div className="px-6 py-4 border-b border-gray-800">
             <h1 className="text-2xl font-bold text-white">Instaclass</h1>
@@ -64,7 +64,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
             </SidebarGroup>
           </SidebarContent>
         </Sidebar>
-        <div className="flex-1 flex flex-col pl-[280px]">
+        <div className="ml-[280px]">
           <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 right-0 left-[280px] z-10">
             <h1 className="text-xl font-semibold text-gray-900">Nypunya</h1>
             <div className="flex items-center gap-4">
@@ -72,7 +72,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
               <span className="text-gray-700">Anil</span>
             </div>
           </header>
-          <main className="flex-1 p-8 mt-[73px]">
+          <main className="p-8 mt-[73px]">
             <div className="container mx-auto">
               {children}
             </div>
