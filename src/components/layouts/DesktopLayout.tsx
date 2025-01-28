@@ -40,7 +40,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-white">
-        <Sidebar className="bg-[#1A1F2C] fixed h-full">
+        <Sidebar className="bg-[#1A1F2C] h-full">
           <div className="px-6 py-4 border-b border-gray-800">
             <h1 className="text-2xl font-bold text-white">Instaclass</h1>
           </div>
@@ -64,7 +64,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
             </SidebarGroup>
           </SidebarContent>
         </Sidebar>
-        <div className="flex-1 ml-[280px]">
+        <div className="flex-1">
           <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <h1 className="text-xl font-semibold text-gray-900">Nypunya</h1>
             <div className="flex items-center gap-4">
