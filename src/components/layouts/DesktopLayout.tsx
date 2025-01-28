@@ -40,7 +40,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <Sidebar className="bg-primary border-r border-gray-200 fixed h-screen">
+        <Sidebar className="bg-primary border-r border-gray-200 fixed h-screen w-64">
           <div className="px-6 py-4 border-b border-gray-200">
             <h1 className="text-2xl font-bold text-white">Instaclass</h1>
           </div>
