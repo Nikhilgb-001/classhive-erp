@@ -30,7 +30,7 @@ const menuItems = [
   { icon: Library, label: "Library", href: "/library", color: "#F87171" }, // Red
   { icon: Bell, label: "Notifications", href: "/notifications", color: "#A78BFA" }, // Purple
   { icon: Documentation, label: "Documentation", href: "/documentation", color: "#FBBF24" }, // Yellow
-  { icon: UserCog, label: "Admin", href: "/admin", color: "#F472B6" }, // Pink
+  { icon: UserCog, label: "Super Admin", href: "/admin", color: "#F472B6" }, // Changed from "Admin" to "Super Admin"
   { icon: School, label: "School Admin", href: "/school-admin", color: "#60A5FA" }, // Blue
   { icon: Settings, label: "Settings", href: "/settings", color: "#34D399" }, // Green
   { icon: LogOut, label: "Logout", href: "/logout", color: "#F87171" } // Red

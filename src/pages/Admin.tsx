@@ -1,6 +1,10 @@
 import { School, Users, FileText, Rocket, Lock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AppLayout } from "@/components/layouts/AppLayout";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const AdminFeatureCard = ({ 
   icon: Icon, 
@@ -70,9 +74,22 @@ const Admin = () => {
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-500 mt-2">Manage your platform settings and configurations</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Super Admin Dashboard</h1>
+            <p className="text-gray-500 mt-2">Manage your platform settings and configurations</p>
+          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>New School Onboarding</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Onboard New School</DialogTitle>
+              </DialogHeader>
+              <SchoolOnboardingForm />
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature) => (
