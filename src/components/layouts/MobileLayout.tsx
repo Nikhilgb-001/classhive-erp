@@ -1,4 +1,10 @@
-import { LayoutDashboard, Users, GraduationCap, Menu } from "lucide-react";
+import { 
+  LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardCheck, 
+  FileText, Megaphone, CalendarDays, Book, StickyNote, Clock, TestTube,
+  Users2, MessageSquare, CalendarMinus, DollarSign, PartyPopper, Image,
+  ChartBar, Library, Bell, BookOpen as Documentation, UserCog, School,
+  Settings, LogOut, Menu 
+} from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -6,6 +12,29 @@ const mobileMenuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Users, label: "Students", href: "/students" },
   { icon: GraduationCap, label: "Teachers", href: "/teachers" },
+  { icon: BookOpen, label: "Classes", href: "/classes" },
+  { icon: ClipboardCheck, label: "Attendance", href: "/attendance" },
+  { icon: FileText, label: "Assignments", href: "/assignments" },
+  { icon: Megaphone, label: "Circulars", href: "/circulars" },
+  { icon: CalendarDays, label: "Calendar", href: "/calendar" },
+  { icon: Book, label: "Homework", href: "/homework" },
+  { icon: StickyNote, label: "Notice Board", href: "/notice-board" },
+  { icon: Clock, label: "Time Table", href: "/time-table" },
+  { icon: TestTube, label: "Tests", href: "/tests" },
+  { icon: Users2, label: "Meetings", href: "/meetings" },
+  { icon: MessageSquare, label: "Chat with Staff", href: "/chat" },
+  { icon: CalendarMinus, label: "Leave Request", href: "/leave-request" },
+  { icon: DollarSign, label: "Fee Details", href: "/fee-details" },
+  { icon: PartyPopper, label: "Events", href: "/events" },
+  { icon: Image, label: "Gallery", href: "/gallery" },
+  { icon: ChartBar, label: "Results", href: "/results" },
+  { icon: Library, label: "Library", href: "/library" },
+  { icon: Bell, label: "Notifications", href: "/notifications" },
+  { icon: Documentation, label: "Documentation", href: "/documentation" },
+  { icon: UserCog, label: "Admin", href: "/admin" },
+  { icon: School, label: "School Admin", href: "/school-admin" },
+  { icon: Settings, label: "Settings", href: "/settings" },
+  { icon: LogOut, label: "Logout", href: "/logout" }
 ];
 
 export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
@@ -42,7 +71,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </main>
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-6 flex justify-around">
-        {mobileMenuItems.map((item) => (
+        {mobileMenuItems.slice(0, 4).map((item) => (
           <a
             key={item.label}
             href={item.href}
