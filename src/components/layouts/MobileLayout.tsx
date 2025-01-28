@@ -41,25 +41,25 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-primary">Instaclass</h1>
+    <div className="min-h-screen bg-[#1A1F2C]">
+      <header className="bg-[#1A1F2C] border-b border-gray-800 px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-white">Instaclass</h1>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <button className="p-2">
+            <button className="p-2 text-white">
               <Menu className="h-6 w-6" />
             </button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="bg-[#1A1F2C] border-l border-gray-800">
             <nav className="mt-8">
               {mobileMenuItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 rounded-lg"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/50 rounded-lg text-gray-200"
                   onClick={() => setOpen(false)}
                 >
-                  <item.icon className="h-5 w-5 text-primary" />
+                  <item.icon className="h-5 w-5 text-gray-400" />
                   <span>{item.label}</span>
                 </a>
               ))}
@@ -70,12 +70,12 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="p-4">
         {children}
       </main>
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-6 flex justify-around">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#1A1F2C] border-t border-gray-800 py-2 px-6 flex justify-around">
         {mobileMenuItems.slice(0, 4).map((item) => (
           <a
             key={item.label}
             href={item.href}
-            className="flex flex-col items-center gap-1 text-gray-600 hover:text-primary"
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-white"
           >
             <item.icon className="h-6 w-6" />
             <span className="text-xs">{item.label}</span>

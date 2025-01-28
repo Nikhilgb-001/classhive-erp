@@ -39,10 +39,10 @@ const menuItems = [
 export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50">
+      <div className="min-h-screen flex w-full bg-[#1A1F2C]">
         <Sidebar>
-          <div className="px-6 py-4">
-            <h1 className="text-2xl font-bold text-primary">Instaclass</h1>
+          <div className="px-6 py-4 border-b border-gray-800">
+            <h1 className="text-2xl font-bold text-white">Instaclass</h1>
           </div>
           <SidebarContent>
             <SidebarGroup>
@@ -52,10 +52,10 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
                     <SidebarMenuButton asChild>
                       <a 
                         href={item.href} 
-                        className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                        className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-200"
                       >
-                        <item.icon className="h-5 w-5 text-gray-500" />
-                        <span className="text-gray-700">{item.label}</span>
+                        <item.icon className="h-5 w-5 text-gray-400" />
+                        <span className="text-gray-200">{item.label}</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
