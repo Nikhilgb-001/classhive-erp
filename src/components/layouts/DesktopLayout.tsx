@@ -64,7 +64,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
             </SidebarGroup>
           </SidebarContent>
         </Sidebar>
-        <div className="flex-1 ml-64">
+        <div className="flex-1 pl-64">
           <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
             <h1 className="text-xl font-semibold text-gray-900">Nypunya</h1>
             <div className="flex items-center gap-4">
