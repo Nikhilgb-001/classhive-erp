@@ -72,7 +72,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
               <span className="text-gray-700">Anil</span>
             </div>
           </header>
-          <main className="p-6 pt-20">
+          <main className="p-6 pt-16">
             <div className="container mx-auto">
               {children}
             </div>
