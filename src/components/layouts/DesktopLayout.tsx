@@ -40,31 +40,33 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <Sidebar className="bg-primary border-r border-gray-200 fixed h-screen w-64">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-white">Instaclass</h1>
-          </div>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupContent className="[&_li]:list-none">
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild>
-                      <a 
-                        href={item.href} 
-                        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-primary-600/50 transition-colors duration-200"
-                      >
-                        <item.icon className="h-5 w-5" style={{ color: item.color }} />
-                        <span className="text-white">{item.label}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </Sidebar>
-        <div className="flex-1 pl-64">
+        <div className="fixed inset-y-0 left-0 z-50">
+          <Sidebar className="bg-primary border-r border-gray-200 h-screen w-64">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h1 className="text-2xl font-bold text-white">Instaclass</h1>
+            </div>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupContent className="[&_li]:list-none">
+                  {menuItems.map((item) => (
+                    <SidebarMenuItem key={item.label}>
+                      <SidebarMenuButton asChild>
+                        <a 
+                          href={item.href} 
+                          className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-primary-600/50 transition-colors duration-200"
+                        >
+                          <item.icon className="h-5 w-5" style={{ color: item.color }} />
+                          <span className="text-white">{item.label}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        </div>
+        <div className="flex-1 ml-64">
           <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
             <h1 className="text-xl font-semibold text-gray-900">Nypunya</h1>
             <div className="flex items-center gap-4">
