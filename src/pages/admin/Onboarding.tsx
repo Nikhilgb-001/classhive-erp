@@ -83,7 +83,8 @@ const AdminOnboarding = () => {
 
   // Map database fields to form fields
   const mapSchoolToFormData = (school) => {
-    return {
+    console.log('Original school data:', school);
+    const formData = {
       schoolName: school.school_name,
       schoolCode: school.school_code,
       schoolAddress: school.school_address,
@@ -96,6 +97,8 @@ const AdminOnboarding = () => {
       founderName: school.founder_name,
       founderPhone: school.founder_phone,
     };
+    console.log('Mapped form data:', formData);
+    return formData;
   };
 
   return (
@@ -165,17 +168,19 @@ const AdminOnboarding = () => {
                       {format(new Date(school.created_at), 'MM/dd/yyyy')}
                     </TableCell>
                     <TableCell>
-                      <Dialog open={isEditDialogOpen && selectedSchool?.id === school.id} onOpenChange={(open) => {
-                        setIsEditDialogOpen(open);
-                        if (!open) setSelectedSchool(null);
-                      }}>
+                      <Dialog 
+                        open={isEditDialogOpen} 
+                        onOpenChange={(open) => {
+                          setIsEditDialogOpen(open);
+                          if (!open) setSelectedSchool(null);
+                        }}
+                      >
                         <DialogTrigger asChild>
                           <Button 
                             variant="ghost" 
                             className="text-primary hover:text-primary-600 hover:bg-primary-50"
                             onClick={() => {
                               const formData = mapSchoolToFormData(school);
-                              console.log('Mapped form data:', formData);
                               setSelectedSchool(formData);
                               setIsEditDialogOpen(true);
                             }}
@@ -184,12 +189,14 @@ const AdminOnboarding = () => {
                             Edit
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>Edit School Details</DialogTitle>
-                          </DialogHeader>
-                          <SchoolOnboardingForm initialData={selectedSchool} />
-                        </DialogContent>
+                        {selectedSchool && (
+                          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>Edit School Details</DialogTitle>
+                            </DialogHeader>
+                            <SchoolOnboardingForm initialData={selectedSchool} />
+                          </DialogContent>
+                        )}
                       </Dialog>
                     </TableCell>
                   </TableRow>
