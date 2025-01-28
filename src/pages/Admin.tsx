@@ -15,10 +15,10 @@ const AdminFeatureCard = ({
   href: string;
   iconColor?: string;
 }) => (
-  <Card className="hover:shadow-lg transition-shadow duration-200">
+  <Card className="hover:shadow-lg transition-shadow duration-200 bg-[#E5DEFF]">
     <a href={href}>
       <CardContent className="p-6">
-        <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4">
+        <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
           <Icon className="w-6 h-6" style={{ color: iconColor }} />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
