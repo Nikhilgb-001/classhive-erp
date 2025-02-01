@@ -76,12 +76,12 @@ export const CreateLicenseForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-primary">School</label>
+          <label className="text-sm font-medium text-white">School</label>
           <Select
             value={selectedSchool}
             onValueChange={setSelectedSchool}
           >
-            <SelectTrigger className="bg-white border border-gray-200">
+            <SelectTrigger className="bg-white text-primary border-gray-200">
               <SelectValue placeholder="Select a school" />
             </SelectTrigger>
             <SelectContent className="bg-white">
@@ -99,13 +99,13 @@ export const CreateLicenseForm = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-primary">Expiry Date</label>
+          <label className="text-sm font-medium text-white">Expiry Date</label>
           <Input
             type="date"
             value={expiryDate}
             onChange={(e) => setExpiryDate(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="bg-white border border-gray-200"
+            className="bg-white text-primary border-gray-200"
           />
         </div>
       </div>
@@ -113,7 +113,7 @@ export const CreateLicenseForm = () => {
       <Button 
         type="submit" 
         disabled={createLicense.isPending || !selectedSchool || !expiryDate}
-        className="bg-primary text-white hover:bg-primary-600"
+        className="bg-white text-primary hover:bg-gray-100"
       >
         {createLicense.isPending ? "Creating..." : "Create License"}
       </Button>

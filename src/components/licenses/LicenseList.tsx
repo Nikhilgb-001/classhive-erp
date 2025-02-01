@@ -27,11 +27,11 @@ export const LicenseList = () => {
   });
 
   if (isLoading) {
-    return <p className="text-gray-500">Loading licenses...</p>;
+    return <p className="text-white">Loading licenses...</p>;
   }
 
   if (!licenses?.length) {
-    return <p className="text-gray-500">No licenses found</p>;
+    return <p className="text-white">No licenses found</p>;
   }
 
   return (
@@ -39,14 +39,14 @@ export const LicenseList = () => {
       {licenses.map((license) => (
         <div
           key={license.id}
-          className="p-6 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow"
+          className="p-6 border border-primary-600 rounded-lg bg-[#1A1F2C] hover:bg-primary-600 transition-colors"
         >
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
-              <p className="font-medium text-primary">
+              <p className="font-medium text-white">
                 {license.schools?.school_name} ({license.schools?.school_app_id})
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-300">
                 Expires: {format(new Date(license.expiry_date), 'PP')}
               </p>
             </div>
