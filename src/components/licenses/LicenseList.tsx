@@ -1,66 +1,72 @@
-import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const LicenseList = () => {
   const { data: licenses, isLoading } = useQuery({
     queryKey: ['licenses'],
     queryFn: async () => {
-      console.log('Fetching licenses...');
       const { data, error } = await supabase
         .from('licenses')
         .select(`
           *,
           schools (
             school_name,
-            school_app_id
+            school_code
           )
-        `);
+        `)
+        .order('created_at', { ascending: false });
       
-      if (error) {
-        console.error('Error fetching licenses:', error);
-        throw error;
-      }
-      console.log('Fetched licenses:', data);
+      if (error) throw error;
       return data;
     }
   });
 
   if (isLoading) {
-    return <p className="text-white">Loading licenses...</p>;
+    return <div className="text-white">Loading licenses...</div>;
   }
 
   if (!licenses?.length) {
-    return <p className="text-white">No licenses found</p>;
+    return <div className="text-white">No licenses found.</div>;
   }
 
   return (
     <div className="space-y-4">
       {licenses.map((license) => (
-        <div
-          key={license.id}
-          className="p-6 border border-primary-600 rounded-lg bg-[#1A1F2C] hover:bg-primary-600 transition-colors"
-        >
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div>
-              <p className="font-medium text-white">
-                {license.schools?.school_name} ({license.schools?.school_app_id})
-              </p>
-              <p className="text-sm text-gray-300">
-                Expires: {format(new Date(license.expiry_date), 'PP')}
-              </p>
+        <Card key={license.id} className="bg-[#1A1F2C] border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white">
+              {license.schools?.school_name || 'Unknown School'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-400">School Code</p>
+                <p className="text-white">{license.schools?.school_code || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Status</p>
+                <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                  license.status === 'active' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {license.status}
+                </span>
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Created At</p>
+                <p className="text-white">{format(new Date(license.created_at), 'MM/dd/yyyy')}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Expiry Date</p>
+                <p className="text-white">{format(new Date(license.expiry_date), 'MM/dd/yyyy')}</p>
+              </div>
             </div>
-            <span
-              className={`px-3 py-1 rounded-full text-sm inline-flex items-center justify-center ${
-                license.status === 'active'
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
-              }`}
-            >
-              {license.status}
-            </span>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );

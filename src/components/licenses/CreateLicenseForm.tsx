@@ -1,121 +1,84 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const CreateLicenseForm = () => {
+  const [schoolId, setSchoolId] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedSchool, setSelectedSchool] = useState<string>("");
-  const [expiryDate, setExpiryDate] = useState<string>("");
 
-  const { data: schools, isLoading: isLoadingSchools } = useQuery({
-    queryKey: ['schools'],
-    queryFn: async () => {
-      console.log('Fetching schools...');
-      const { data, error } = await supabase
-        .from('schools')
-        .select('*')
-        .order('school_name');
-      
-      if (error) {
-        console.error('Error fetching schools:', error);
-        throw error;
-      }
-      console.log('Fetched schools:', data);
-      return data;
-    }
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  const createLicense = useMutation({
-    mutationFn: async () => {
-      if (!selectedSchool || !expiryDate) {
-        throw new Error('Please select a school and expiry date');
-      }
-
+    try {
       const { error } = await supabase
         .from('licenses')
         .insert([
           {
-            school_id: selectedSchool,
-            expiry_date: new Date(expiryDate).toISOString(),
+            school_id: schoolId,
+            expiry_date: expiryDate,
             status: 'active'
           }
         ]);
 
       if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['licenses'] });
+
       toast({
-        title: "Success",
-        description: "License created successfully",
+        title: "License Created",
+        description: "The license has been created successfully.",
       });
-      setSelectedSchool("");
+
+      queryClient.invalidateQueries({ queryKey: ['licenses'] });
+      setSchoolId("");
       setExpiryDate("");
-    },
-    onError: (error) => {
+    } catch (error) {
       console.error('Error creating license:', error);
       toast({
         title: "Error",
-        description: "Failed to create license",
+        description: "Failed to create license. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createLicense.mutate();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white">School</label>
-          <Select
-            value={selectedSchool}
-            onValueChange={setSelectedSchool}
-          >
-            <SelectTrigger className="bg-white text-primary border-gray-200">
-              <SelectValue placeholder="Select a school" />
-            </SelectTrigger>
-            <SelectContent className="bg-white">
-              {schools?.map((school) => (
-                <SelectItem 
-                  key={school.id} 
-                  value={school.id}
-                  className="text-primary hover:bg-gray-100"
-                >
-                  {school.school_name} - {school.school_app_id}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white">Expiry Date</label>
-          <Input
-            type="date"
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(e.target.value)}
-            min={new Date().toISOString().split('T')[0]}
-            className="bg-white text-primary border-gray-200"
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-6 bg-[#1A1F2C] p-6 rounded-lg">
+      <div className="space-y-2">
+        <label htmlFor="schoolId" className="text-white">School ID</label>
+        <Input
+          id="schoolId"
+          value={schoolId}
+          onChange={(e) => setSchoolId(e.target.value)}
+          required
+          className="bg-white text-primary border-gray-200"
+        />
       </div>
-
+      <div className="space-y-2">
+        <label htmlFor="expiryDate" className="text-white">Expiry Date</label>
+        <Input
+          id="expiryDate"
+          type="date"
+          value={expiryDate}
+          onChange={(e) => setExpiryDate(e.target.value)}
+          required
+          className="bg-white text-primary border-gray-200"
+        />
+      </div>
       <Button 
         type="submit" 
-        disabled={createLicense.isPending || !selectedSchool || !expiryDate}
-        className="bg-white text-primary hover:bg-gray-100"
+        className="w-full bg-white text-primary hover:bg-gray-100" 
+        disabled={isLoading}
       >
-        {createLicense.isPending ? "Creating..." : "Create License"}
+        {isLoading ? "Creating..." : "Create License"}
       </Button>
     </form>
   );
