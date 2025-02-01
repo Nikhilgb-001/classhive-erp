@@ -16,15 +16,20 @@ const AdminOnboarding = () => {
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
-  const { data: schools, isLoading } = useQuery({
+  const { data: schools, isLoading, error } = useQuery({
     queryKey: ['schools'],
     queryFn: async () => {
+      console.log('Fetching schools...');
       const { data, error } = await supabase
         .from('schools')
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching schools:', error);
+        throw error;
+      }
+      console.log('Fetched schools:', data);
       return data;
     }
   });
@@ -100,6 +105,11 @@ const AdminOnboarding = () => {
     console.log('Mapped form data:', formData);
     return formData;
   };
+
+  if (error) {
+    console.error('Error loading schools:', error);
+    return <div>Error loading schools. Please try again later.</div>;
+  }
 
   return (
     <AppLayout>
