@@ -152,7 +152,7 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-[#1A1F2C] p-6 rounded-lg">
       <LogoUpload
         logoUrl={previewUrl}
         schoolName={formData.schoolName}
@@ -162,7 +162,11 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
         formData={formData}
         onChange={handleInputChange}
       />
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button 
+        type="submit" 
+        className="w-full bg-white text-primary hover:bg-gray-100" 
+        disabled={isLoading}
+      >
         {isLoading ? (initialData ? "Updating..." : "Onboarding...") : (initialData ? "Update School" : "Onboard School")}
       </Button>
     </form>
