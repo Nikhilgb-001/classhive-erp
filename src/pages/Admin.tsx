@@ -27,16 +27,16 @@ const AdminFeatureCard = ({
 
   return (
     <Card 
-      className="hover:shadow-lg transition-shadow duration-200 bg-[#E5DEFF] cursor-pointer"
+      className="hover:shadow-lg transition-shadow duration-200 bg-white cursor-pointer"
       onClick={handleCardClick}
     >
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="w-full">
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-[#F1F1F1] rounded-lg flex items-center justify-center mb-4">
               <Icon className="w-6 h-6" style={{ color: iconColor }} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+            <h3 className="text-lg font-semibold text-[#1A1F2C] mb-2">{title}</h3>
             <p className="text-gray-500 text-left">{description}</p>
           </div>
         </div>
@@ -80,9 +80,9 @@ const Admin = () => {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 bg-[#F1F1F1] min-h-screen p-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Super Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold text-[#1A1F2C]">Super Admin Dashboard</h1>
           <p className="text-gray-500 mt-2">Manage your platform settings and configurations</p>
         </div>
 

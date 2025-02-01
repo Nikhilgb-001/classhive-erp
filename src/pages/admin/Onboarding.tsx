@@ -113,30 +113,30 @@ const AdminOnboarding = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-[1400px] mx-auto space-y-6">
+      <div className="max-w-[1400px] mx-auto space-y-6 bg-[#F1F1F1] min-h-screen p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              className="p-0 hover:bg-transparent text-[#F1F1F1]"
+              className="p-0 hover:bg-transparent text-[#1A1F2C]"
               onClick={() => navigate('/admin')}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-semibold text-[#F1F1F1]">School Onboarding</h1>
+            <h1 className="text-2xl font-semibold text-[#1A1F2C]">School Onboarding</h1>
           </div>
           <div className="flex gap-3">
             <Button 
               variant="outline"
               onClick={handleExportCSV}
-              className="flex items-center gap-2 bg-[#1A1F2C] text-[#F1F1F1] border-[#F1F1F1] hover:bg-[#2A2F3C]"
+              className="flex items-center gap-2 bg-white text-[#1A1F2C] border-[#1A1F2C]/10 hover:bg-gray-50"
             >
               <Download className="h-4 w-4" />
               Export CSV
             </Button>
             <Button 
               onClick={() => navigate('/admin/onboarding/new')}
-              className="bg-[#F1F1F1] text-[#1A1F2C] hover:bg-[#E1E1E1]"
+              className="bg-[#1A1F2C] text-white hover:bg-[#2A2F3C]"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Onboarding
@@ -144,27 +144,27 @@ const AdminOnboarding = () => {
           </div>
         </div>
 
-        <div className="rounded-md border border-[#F1F1F1]/10 bg-[#1A1F2C] overflow-x-auto">
+        <div className="rounded-md border border-[#1A1F2C]/10 bg-white overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-[#F1F1F1]/10">
-                <TableHead className="text-[#F1F1F1]">SCHOOL NAME</TableHead>
-                <TableHead className="text-[#F1F1F1]">ADMIN NAME</TableHead>
-                <TableHead className="text-[#F1F1F1]">STATUS</TableHead>
-                <TableHead className="text-[#F1F1F1]">CREATED AT</TableHead>
-                <TableHead className="text-[#F1F1F1]">ACTIONS</TableHead>
+              <TableRow className="border-[#1A1F2C]/10">
+                <TableHead className="text-[#1A1F2C]">SCHOOL NAME</TableHead>
+                <TableHead className="text-[#1A1F2C]">ADMIN NAME</TableHead>
+                <TableHead className="text-[#1A1F2C]">STATUS</TableHead>
+                <TableHead className="text-[#1A1F2C]">CREATED AT</TableHead>
+                <TableHead className="text-[#1A1F2C]">ACTIONS</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-[#F1F1F1]">Loading...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8 text-[#1A1F2C]">Loading...</TableCell>
                 </TableRow>
               ) : schools && schools.length > 0 ? (
                 schools.map((school) => (
-                  <TableRow key={school.id} className="border-[#F1F1F1]/10">
-                    <TableCell className="text-[#F1F1F1]">{school.school_name}</TableCell>
-                    <TableCell className="text-[#F1F1F1]">{school.admin_name}</TableCell>
+                  <TableRow key={school.id} className="border-[#1A1F2C]/10">
+                    <TableCell className="text-[#1A1F2C]">{school.school_name}</TableCell>
+                    <TableCell className="text-[#1A1F2C]">{school.admin_name}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         school.status === 'completed' 
@@ -174,7 +174,7 @@ const AdminOnboarding = () => {
                         {school.status || 'pending'}
                       </span>
                     </TableCell>
-                    <TableCell className="text-[#F1F1F1]">
+                    <TableCell className="text-[#1A1F2C]">
                       {format(new Date(school.created_at), 'MM/dd/yyyy')}
                     </TableCell>
                     <TableCell>
@@ -182,7 +182,7 @@ const AdminOnboarding = () => {
                         <DialogTrigger asChild>
                           <Button 
                             variant="ghost" 
-                            className="text-[#F1F1F1] hover:text-[#F1F1F1] hover:bg-[#2A2F3C]"
+                            className="text-[#1A1F2C] hover:text-[#1A1F2C] hover:bg-gray-50"
                             onClick={() => {
                               const formData = mapSchoolToFormData(school);
                               setSelectedSchool(formData);
@@ -192,9 +192,9 @@ const AdminOnboarding = () => {
                             Edit
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1A1F2C]">
+                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
                           <DialogHeader>
-                            <DialogTitle className="text-[#F1F1F1]">Edit School Details</DialogTitle>
+                            <DialogTitle className="text-[#1A1F2C]">Edit School Details</DialogTitle>
                           </DialogHeader>
                           {selectedSchool && <SchoolOnboardingForm initialData={selectedSchool} />}
                         </DialogContent>
@@ -204,7 +204,7 @@ const AdminOnboarding = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-[#F1F1F1]">No schools found</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8 text-[#1A1F2C]">No schools found</TableCell>
                 </TableRow>
               )}
             </TableBody>

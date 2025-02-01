@@ -9,7 +9,7 @@ const NewSchoolOnboarding = () => {
 
   return (
     <AppLayout>
-      <div className="w-full space-y-6">
+      <div className="w-full space-y-6 bg-[#F1F1F1] min-h-screen p-6">
         <div className="flex items-center gap-4 mb-6">
           <Button 
             variant="ghost" 
