@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      licenses: {
+        Row: {
+          created_at: string
+          expiry_date: string
+          id: string
+          school_id: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          expiry_date: string
+          id?: string
+          school_id: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          expiry_date?: string
+          id?: string
+          school_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licenses_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       schools: {
         Row: {
           admin_email: string
