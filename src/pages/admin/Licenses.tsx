@@ -133,50 +133,53 @@ const AdminLicenses = () => {
 
   return (
     <AppLayout>
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <div>
-          <h1 className="text-2xl font-bold">License Management</h1>
-          <p className="text-gray-500 mt-2">Manage school licenses and subscriptions</p>
+      <div className="space-y-6 max-w-4xl mx-auto p-6">
+        <div className="flex items-center gap-4 mb-6">
+          <h1 className="text-2xl font-semibold text-primary">License Management</h1>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Create New License</CardTitle>
+        <Card className="bg-white shadow-md">
+          <CardHeader className="border-b border-gray-200">
+            <CardTitle className="text-xl text-primary">Create New License</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">School</label>
-                <Select
-                  value={selectedSchool}
-                  onValueChange={setSelectedSchool}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a school" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schools?.map((school) => (
-                      <SelectItem key={school.id} value={school.id}>
-                        {school.school_name} - {school.school_app_id}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          <CardContent className="space-y-6 pt-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-primary">School</label>
+                  <Select
+                    value={selectedSchool}
+                    onValueChange={setSelectedSchool}
+                  >
+                    <SelectTrigger className="bg-secondary border border-gray-200">
+                      <SelectValue placeholder="Select a school" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schools?.map((school) => (
+                        <SelectItem key={school.id} value={school.id}>
+                          {school.school_name} - {school.school_app_id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Expiry Date</label>
-                <Input
-                  type="date"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-primary">Expiry Date</label>
+                  <Input
+                    type="date"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="bg-secondary border border-gray-200"
+                  />
+                </div>
               </div>
 
               <Button 
                 type="submit" 
                 disabled={createLicense.isPending || !selectedSchool || !expiryDate}
+                className="w-full md:w-auto bg-primary text-white hover:bg-primary-600"
               >
                 {createLicense.isPending ? "Creating..." : "Create License"}
               </Button>
@@ -184,42 +187,44 @@ const AdminLicenses = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Licenses</CardTitle>
+        <Card className="bg-white shadow-md">
+          <CardHeader className="border-b border-gray-200">
+            <CardTitle className="text-xl text-primary">Active Licenses</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             {isLoadingLicenses ? (
-              <p>Loading licenses...</p>
+              <p className="text-gray-500">Loading licenses...</p>
             ) : licenses?.length ? (
               <div className="space-y-4">
                 {licenses.map((license) => (
                   <div
                     key={license.id}
-                    className="p-4 border rounded-lg flex items-center justify-between"
+                    className="p-6 border border-gray-200 rounded-lg bg-secondary hover:shadow-md transition-shadow"
                   >
-                    <div>
-                      <p className="font-medium">
-                        {license.schools?.school_name} ({license.schools?.school_app_id})
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Expires: {format(new Date(license.expiry_date), 'PP')}
-                      </p>
+                    <div className="flex flex-col md:flex-row justify-between gap-4">
+                      <div>
+                        <p className="font-medium text-primary">
+                          {license.schools?.school_name} ({license.schools?.school_app_id})
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Expires: {format(new Date(license.expiry_date), 'PP')}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm inline-flex items-center justify-center ${
+                          license.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {license.status}
+                      </span>
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-sm ${
-                        license.status === 'active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {license.status}
-                    </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p>No licenses found</p>
+              <p className="text-gray-500">No licenses found</p>
             )}
           </CardContent>
         </Card>
