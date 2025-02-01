@@ -6,6 +6,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Upload } from "lucide-react";
 
 interface SchoolFormData {
   schoolName: string;
@@ -19,6 +21,7 @@ interface SchoolFormData {
   billingEmail: string;
   founderName: string;
   founderPhone: string;
+  logoUrl?: string;
 }
 
 interface SchoolOnboardingFormProps {
@@ -31,6 +34,8 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<SchoolFormData>({
     schoolName: "",
@@ -44,6 +49,7 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
     billingEmail: "",
     founderName: "",
     founderPhone: "",
+    logoUrl: "",
   });
 
   useEffect(() => {
@@ -60,7 +66,11 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
         billingEmail: initialData.billingEmail || "",
         founderName: initialData.founderName || "",
         founderPhone: initialData.founderPhone || "",
+        logoUrl: initialData.logoUrl || "",
       });
+      if (initialData.logoUrl) {
+        setPreviewUrl(initialData.logoUrl);
+      }
     }
   }, [initialData]);
 
@@ -88,6 +98,44 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+    }
+  };
+
+  const uploadLogo = async (schoolAppId: string): Promise<string | null> => {
+    if (!logoFile) return null;
+
+    const fileExt = logoFile.name.split('.').pop();
+    const filePath = `${schoolAppId}.${fileExt}`;
+
+    try {
+      const { error: uploadError, data } = await supabase.storage
+        .from('school-logos')
+        .upload(filePath, logoFile, {
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error('Error uploading logo:', uploadError);
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('school-logos')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error in uploadLogo:', error);
+      throw error;
+    }
+  };
+
   const generateSchoolAppId = () => {
     const timestamp = Date.now().toString().slice(-6);
     const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
@@ -112,6 +160,11 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
     try {
       console.log('Attempting to insert/update school with session:', session);
       
+      let logoUrl = null;
+      if (logoFile) {
+        logoUrl = await uploadLogo(schoolAppId);
+      }
+      
       const schoolData = {
         school_app_id: schoolAppId,
         school_name: formData.schoolName,
@@ -125,6 +178,7 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
         billing_email: formData.billingEmail,
         founder_name: formData.founderName,
         founder_phone: formData.founderPhone,
+        logo_url: logoUrl,
       };
 
       const { error } = await supabase
@@ -170,6 +224,33 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="flex items-center space-x-4 mb-6">
+        <Avatar className="h-24 w-24">
+          <AvatarImage src={previewUrl || ""} alt="School logo" />
+          <AvatarFallback className="bg-primary/10">
+            {formData.schoolName ? formData.schoolName[0].toUpperCase() : "S"}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <Label htmlFor="logo" className="cursor-pointer">
+            <div className="flex items-center space-x-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md">
+              <Upload className="h-4 w-4" />
+              <span>Upload Logo</span>
+            </div>
+          </Label>
+          <Input
+            id="logo"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleLogoChange}
+          />
+          <p className="text-sm text-muted-foreground mt-2">
+            Recommended: Square image, at least 128x128px
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="schoolName">School Name</Label>
@@ -287,6 +368,7 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
           />
         </div>
       </div>
+
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? (initialData ? "Updating..." : "Onboarding...") : (initialData ? "Update School" : "Onboard School")}
       </Button>
