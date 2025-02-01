@@ -40,7 +40,6 @@ const AdminOnboarding = () => {
       return;
     }
 
-    // Convert schools data to CSV format
     const headers = [
       "School Name",
       "School Code",
