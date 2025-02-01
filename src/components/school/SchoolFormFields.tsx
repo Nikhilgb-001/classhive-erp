@@ -11,51 +11,51 @@ export const SchoolFormFields = ({ formData, onChange }: SchoolFormFieldsProps) 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
-        <Label htmlFor="schoolName">School Name</Label>
+        <Label htmlFor="schoolName" className="text-[#1A1F2C]">School Name</Label>
         <Input
           id="schoolName"
           name="schoolName"
           value={formData.schoolName}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="schoolCode">School Code</Label>
+        <Label htmlFor="schoolCode" className="text-[#1A1F2C]">School Code</Label>
         <Input
           id="schoolCode"
           name="schoolCode"
           value={formData.schoolCode}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="schoolAddress">School Address</Label>
+        <Label htmlFor="schoolAddress" className="text-[#1A1F2C]">School Address</Label>
         <Input
           id="schoolAddress"
           name="schoolAddress"
           value={formData.schoolAddress}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="adminName">Admin Name</Label>
+        <Label htmlFor="adminName" className="text-[#1A1F2C]">Admin Name</Label>
         <Input
           id="adminName"
           name="adminName"
           value={formData.adminName}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="adminEmail">Admin Email</Label>
+        <Label htmlFor="adminEmail" className="text-[#1A1F2C]">Admin Email</Label>
         <Input
           id="adminEmail"
           name="adminEmail"
@@ -63,11 +63,11 @@ export const SchoolFormFields = ({ formData, onChange }: SchoolFormFieldsProps) 
           value={formData.adminEmail}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="adminPhone">Admin Phone</Label>
+        <Label htmlFor="adminPhone" className="text-[#1A1F2C]">Admin Phone</Label>
         <Input
           id="adminPhone"
           name="adminPhone"
@@ -75,22 +75,22 @@ export const SchoolFormFields = ({ formData, onChange }: SchoolFormFieldsProps) 
           value={formData.adminPhone}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="billingContactName">Billing Contact Name</Label>
+        <Label htmlFor="billingContactName" className="text-[#1A1F2C]">Billing Contact Name</Label>
         <Input
           id="billingContactName"
           name="billingContactName"
           value={formData.billingContactName}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="billingPhone">Billing Phone</Label>
+        <Label htmlFor="billingPhone" className="text-[#1A1F2C]">Billing Phone</Label>
         <Input
           id="billingPhone"
           name="billingPhone"
@@ -98,11 +98,11 @@ export const SchoolFormFields = ({ formData, onChange }: SchoolFormFieldsProps) 
           value={formData.billingPhone}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="billingEmail">Billing Email</Label>
+        <Label htmlFor="billingEmail" className="text-[#1A1F2C]">Billing Email</Label>
         <Input
           id="billingEmail"
           name="billingEmail"
@@ -110,22 +110,22 @@ export const SchoolFormFields = ({ formData, onChange }: SchoolFormFieldsProps) 
           value={formData.billingEmail}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="founderName">Founder Name</Label>
+        <Label htmlFor="founderName" className="text-[#1A1F2C]">Founder Name</Label>
         <Input
           id="founderName"
           name="founderName"
           value={formData.founderName}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="founderPhone">Founder Phone</Label>
+        <Label htmlFor="founderPhone" className="text-[#1A1F2C]">Founder Phone</Label>
         <Input
           id="founderPhone"
           name="founderPhone"
@@ -133,7 +133,7 @@ export const SchoolFormFields = ({ formData, onChange }: SchoolFormFieldsProps) 
           value={formData.founderPhone}
           onChange={onChange}
           required
-          className="bg-[#F1F1F1] text-primary border-0"
+          className="bg-white text-[#1A1F2C] border-[#1A1F2C]/10"
         />
       </div>
     </div>
