@@ -39,8 +39,18 @@ export default {
           900: "#050608"
         },
         secondary: {
-          DEFAULT: "#F1F1F1",
-          foreground: "#1A1F2C"
+          DEFAULT: "#7E69AB",
+          foreground: "#FFFFFF",
+          50: "#EAE6F1",
+          100: "#D5CCE3",
+          200: "#AB99C7",
+          300: "#8166AB",
+          400: "#57338F",
+          500: "#7E69AB",
+          600: "#655489",
+          700: "#4C3F67",
+          800: "#322A44",
+          900: "#191522"
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
