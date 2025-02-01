@@ -151,12 +151,16 @@ const AdminLicenses = () => {
                     value={selectedSchool}
                     onValueChange={setSelectedSchool}
                   >
-                    <SelectTrigger className="bg-secondary border border-gray-200">
-                      <SelectValue placeholder="Select a school" />
+                    <SelectTrigger className="bg-white border border-gray-200 text-primary">
+                      <SelectValue placeholder="Select a school" className="text-primary" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white">
                       {schools?.map((school) => (
-                        <SelectItem key={school.id} value={school.id}>
+                        <SelectItem 
+                          key={school.id} 
+                          value={school.id}
+                          className="text-primary hover:bg-gray-100"
+                        >
                           {school.school_name} - {school.school_app_id}
                         </SelectItem>
                       ))}
@@ -171,7 +175,7 @@ const AdminLicenses = () => {
                     value={expiryDate}
                     onChange={(e) => setExpiryDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    className="bg-secondary border border-gray-200"
+                    className="bg-white border border-gray-200 text-primary"
                   />
                 </div>
               </div>
@@ -179,7 +183,7 @@ const AdminLicenses = () => {
               <Button 
                 type="submit" 
                 disabled={createLicense.isPending || !selectedSchool || !expiryDate}
-                className="w-full md:w-auto bg-primary text-white hover:bg-primary-600"
+                className="bg-primary text-white hover:bg-primary-600"
               >
                 {createLicense.isPending ? "Creating..." : "Create License"}
               </Button>
@@ -199,7 +203,7 @@ const AdminLicenses = () => {
                 {licenses.map((license) => (
                   <div
                     key={license.id}
-                    className="p-6 border border-gray-200 rounded-lg bg-secondary hover:shadow-md transition-shadow"
+                    className="p-6 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col md:flex-row justify-between gap-4">
                       <div>
