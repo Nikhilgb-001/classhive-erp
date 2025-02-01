@@ -2,14 +2,15 @@ import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, ArrowLeft, Download, Pencil } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Download, Pencil, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const AdminOnboarding = () => {
   const navigate = useNavigate();
@@ -117,25 +118,25 @@ const AdminOnboarding = () => {
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              className="p-0 hover:bg-transparent text-gray-900"
+              className="p-0 hover:bg-transparent text-[#F1F1F1]"
               onClick={() => navigate('/admin')}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-semibold text-gray-900">School Onboarding</h1>
+            <h1 className="text-2xl font-semibold text-[#F1F1F1]">School Onboarding</h1>
           </div>
           <div className="flex gap-3">
             <Button 
               variant="outline"
               onClick={handleExportCSV}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-[#1A1F2C] text-[#F1F1F1] border-[#F1F1F1] hover:bg-[#2A2F3C]"
             >
               <Download className="h-4 w-4" />
               Export CSV
             </Button>
             <Button 
               onClick={() => navigate('/admin/onboarding/new')}
-              className="bg-primary hover:bg-primary-600 text-white"
+              className="bg-[#F1F1F1] text-[#1A1F2C] hover:bg-[#E1E1E1]"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Onboarding
@@ -143,27 +144,27 @@ const AdminOnboarding = () => {
           </div>
         </div>
 
-        <div className="rounded-md border border-gray-200 bg-white overflow-x-auto">
+        <div className="rounded-md border border-[#F1F1F1]/10 bg-[#1A1F2C] overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-200">
-                <TableHead className="text-gray-700">SCHOOL NAME</TableHead>
-                <TableHead className="text-gray-700">ADMIN NAME</TableHead>
-                <TableHead className="text-gray-700">STATUS</TableHead>
-                <TableHead className="text-gray-700">CREATED AT</TableHead>
-                <TableHead className="text-gray-700">ACTIONS</TableHead>
+              <TableRow className="border-[#F1F1F1]/10">
+                <TableHead className="text-[#F1F1F1]">SCHOOL NAME</TableHead>
+                <TableHead className="text-[#F1F1F1]">ADMIN NAME</TableHead>
+                <TableHead className="text-[#F1F1F1]">STATUS</TableHead>
+                <TableHead className="text-[#F1F1F1]">CREATED AT</TableHead>
+                <TableHead className="text-[#F1F1F1]">ACTIONS</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">Loading...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8 text-[#F1F1F1]">Loading...</TableCell>
                 </TableRow>
               ) : schools && schools.length > 0 ? (
                 schools.map((school) => (
-                  <TableRow key={school.id} className="border-gray-200">
-                    <TableCell className="text-gray-900">{school.school_name}</TableCell>
-                    <TableCell className="text-gray-900">{school.admin_name}</TableCell>
+                  <TableRow key={school.id} className="border-[#F1F1F1]/10">
+                    <TableCell className="text-[#F1F1F1]">{school.school_name}</TableCell>
+                    <TableCell className="text-[#F1F1F1]">{school.admin_name}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         school.status === 'completed' 
@@ -173,46 +174,37 @@ const AdminOnboarding = () => {
                         {school.status || 'pending'}
                       </span>
                     </TableCell>
-                    <TableCell className="text-gray-900">
+                    <TableCell className="text-[#F1F1F1]">
                       {format(new Date(school.created_at), 'MM/dd/yyyy')}
                     </TableCell>
                     <TableCell>
-                      <Dialog 
-                        open={isEditDialogOpen} 
-                        onOpenChange={(open) => {
-                          setIsEditDialogOpen(open);
-                          if (!open) setSelectedSchool(null);
-                        }}
-                      >
+                      <Dialog>
                         <DialogTrigger asChild>
                           <Button 
                             variant="ghost" 
-                            className="text-primary hover:text-primary-600 hover:bg-primary-50"
+                            className="text-[#F1F1F1] hover:text-[#F1F1F1] hover:bg-[#2A2F3C]"
                             onClick={() => {
                               const formData = mapSchoolToFormData(school);
                               setSelectedSchool(formData);
-                              setIsEditDialogOpen(true);
                             }}
                           >
                             <Pencil className="h-4 w-4 mr-2" />
                             Edit
                           </Button>
                         </DialogTrigger>
-                        {selectedSchool && (
-                          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Edit School Details</DialogTitle>
-                            </DialogHeader>
-                            <SchoolOnboardingForm initialData={selectedSchool} />
-                          </DialogContent>
-                        )}
+                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1A1F2C]">
+                          <DialogHeader>
+                            <DialogTitle className="text-[#F1F1F1]">Edit School Details</DialogTitle>
+                          </DialogHeader>
+                          {selectedSchool && <SchoolOnboardingForm initialData={selectedSchool} />}
+                        </DialogContent>
                       </Dialog>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">No schools found</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8 text-[#F1F1F1]">No schools found</TableCell>
                 </TableRow>
               )}
             </TableBody>

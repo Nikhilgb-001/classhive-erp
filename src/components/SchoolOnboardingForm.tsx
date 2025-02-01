@@ -164,7 +164,7 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
       />
       <Button 
         type="submit" 
-        className="w-full bg-white text-primary hover:bg-gray-100" 
+        className="w-full bg-[#F1F1F1] text-primary hover:bg-[#E1E1E1]" 
         disabled={isLoading}
       >
         {isLoading ? (initialData ? "Updating..." : "Onboarding...") : (initialData ? "Update School" : "Onboard School")}
