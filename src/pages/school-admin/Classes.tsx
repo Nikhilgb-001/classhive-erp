@@ -3,11 +3,9 @@ import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ClassConfigurationForm } from "@/components/class/ClassConfigurationForm";
 
 const Classes = () => {
   const navigate = useNavigate();
-  const [showForm, setShowForm] = useState(false);
 
   return (
     <AppLayout>
@@ -28,20 +26,12 @@ const Classes = () => {
               <FileDown className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
-            <Button onClick={() => setShowForm(true)}>
+            <Button onClick={() => navigate('/school-admin/classes/new')}>
               <Plus className="w-4 h-4 mr-2" />
               Add Class
             </Button>
           </div>
         </div>
-
-        {showForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <ClassConfigurationForm onClose={() => setShowForm(false)} />
-            </div>
-          </div>
-        )}
       </div>
     </AppLayout>
   );

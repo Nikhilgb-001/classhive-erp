@@ -16,6 +16,7 @@ import NewSchoolOnboarding from "./pages/admin/NewSchoolOnboarding";
 import AdminRoleAccess from "./pages/admin/RoleAccess";
 import SchoolAdmin from "./pages/school-admin/SchoolAdmin";
 import Classes from "./pages/school-admin/Classes";
+import NewClass from "./pages/school-admin/NewClass";
 import Teachers from "./pages/school-admin/Teachers";
 import Students from "./pages/school-admin/Students";
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/admin/role-access" element={<AdminRoleAccess />} />
           <Route path="/school-admin" element={<SchoolAdmin />} />
           <Route path="/school-admin/classes" element={<Classes />} />
+          <Route path="/school-admin/classes/new" element={<NewClass />} />
           <Route path="/school-admin/teachers" element={<Teachers />} />
           <Route path="/school-admin/students" element={<Students />} />
           <Route path="*" element={<NotFound />} />
