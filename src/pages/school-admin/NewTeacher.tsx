@@ -114,9 +114,13 @@ const NewTeacher = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     {classConfig?.classes.map((className: string, index: number) => (
-                      <SelectItem key={index} value={className} className="cursor-pointer hover:bg-gray-100">
+                      <SelectItem 
+                        key={index} 
+                        value={className} 
+                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                      >
                         {className}
                       </SelectItem>
                     ))}
@@ -129,9 +133,13 @@ const NewTeacher = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="Select section" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     {classConfig?.sections.map((section: string, index: number) => (
-                      <SelectItem key={index} value={section} className="cursor-pointer hover:bg-gray-100">
+                      <SelectItem 
+                        key={index} 
+                        value={section} 
+                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                      >
                         {section}
                       </SelectItem>
                     ))}
@@ -146,9 +154,13 @@ const NewTeacher = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="Select subjects" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     {classConfig?.subjects.map((subject: string, index: number) => (
-                      <SelectItem key={index} value={subject} className="cursor-pointer hover:bg-gray-100">
+                      <SelectItem 
+                        key={index} 
+                        value={subject} 
+                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                      >
                         {subject}
                       </SelectItem>
                     ))}
@@ -161,9 +173,13 @@ const NewTeacher = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="Select primary subject" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     {classConfig?.subjects.map((subject: string, index: number) => (
-                      <SelectItem key={index} value={subject} className="cursor-pointer hover:bg-gray-100">
+                      <SelectItem 
+                        key={index} 
+                        value={subject} 
+                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                      >
                         {subject}
                       </SelectItem>
                     ))}
@@ -187,9 +203,9 @@ const NewTeacher = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="active" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Active</SelectItem>
+                    <SelectItem value="inactive" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -200,9 +216,9 @@ const NewTeacher = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Is primary teacher?" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
+                <SelectContent className="bg-white">
+                  <SelectItem value="yes" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Yes</SelectItem>
+                  <SelectItem value="no" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">No</SelectItem>
                 </SelectContent>
               </Select>
             </div>
