@@ -15,7 +15,8 @@ const NewTeacher = () => {
   const { toast } = useToast();
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedSection, setSelectedSection] = useState<string>("");
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [selectedSubjects, setSelectedSubjects] = useState<string>("");
+  const [primarySubject, setPrimarySubject] = useState<string>("");
 
   // Fetch class configurations
   const { data: classConfig, isLoading } = useQuery({
@@ -115,7 +116,7 @@ const NewTeacher = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {classConfig?.classes.map((className: string, index: number) => (
-                      <SelectItem key={index} value={className}>
+                      <SelectItem key={index} value={className} className="cursor-pointer hover:bg-gray-100">
                         {className}
                       </SelectItem>
                     ))}
@@ -130,7 +131,7 @@ const NewTeacher = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {classConfig?.sections.map((section: string, index: number) => (
-                      <SelectItem key={index} value={section}>
+                      <SelectItem key={index} value={section} className="cursor-pointer hover:bg-gray-100">
                         {section}
                       </SelectItem>
                     ))}
@@ -140,14 +141,14 @@ const NewTeacher = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="subject">Subject</Label>
-                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                <Label htmlFor="subjects">Subjects Handled</Label>
+                <Select value={selectedSubjects} onValueChange={setSelectedSubjects}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select subject" />
+                    <SelectValue placeholder="Select subjects" />
                   </SelectTrigger>
                   <SelectContent>
                     {classConfig?.subjects.map((subject: string, index: number) => (
-                      <SelectItem key={index} value={subject}>
+                      <SelectItem key={index} value={subject} className="cursor-pointer hover:bg-gray-100">
                         {subject}
                       </SelectItem>
                     ))}
@@ -155,14 +156,17 @@ const NewTeacher = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="isPrimaryTeacher">Primary Teacher</Label>
-                <Select defaultValue="no">
+                <Label htmlFor="primarySubject">Primary Subject</Label>
+                <Select value={primarySubject} onValueChange={setPrimarySubject}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Is primary teacher?" />
+                    <SelectValue placeholder="Select primary subject" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
+                    {classConfig?.subjects.map((subject: string, index: number) => (
+                      <SelectItem key={index} value={subject} className="cursor-pointer hover:bg-gray-100">
+                        {subject}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -189,6 +193,18 @@ const NewTeacher = () => {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="isPrimaryTeacher">Primary Teacher</Label>
+              <Select defaultValue="no">
+                <SelectTrigger>
+                  <SelectValue placeholder="Is primary teacher?" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit" className="w-full">Add Teacher</Button>
           </form>
