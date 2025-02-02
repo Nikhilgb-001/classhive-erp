@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ClassConfigurationList } from "@/components/class/ClassConfigurationList";
 
 const Classes = () => {
   const navigate = useNavigate();
@@ -31,6 +31,10 @@ const Classes = () => {
               Add Class
             </Button>
           </div>
+        </div>
+
+        <div className="bg-gray-50 p-6 rounded-lg">
+          <ClassConfigurationList />
         </div>
       </div>
     </AppLayout>
