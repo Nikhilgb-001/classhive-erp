@@ -26,12 +26,12 @@ export const SubjectFields: React.FC<SubjectFieldsProps> = ({
 }) => {
   const processArrayValues = (arr: string[] | undefined) => {
     if (!arr || arr.length === 0) return [];
-    const combinedString = arr.join(',');
-    return combinedString.split(',').map(item => item.trim()).filter(Boolean);
+    // Since the data comes as ["subject1, subject2"], we need to handle this format
+    return arr[0].split(',').map(item => item.trim()).filter(Boolean);
   };
 
   const subjects = processArrayValues(classConfig?.subjects);
-  const selectedSubjectsArray = selectedSubjects ? selectedSubjects.split(',') : [];
+  const selectedSubjectsArray = selectedSubjects ? selectedSubjects.split(',').map(s => s.trim()).filter(Boolean) : [];
   
   console.log('Available subjects:', subjects);
   console.log('Selected subjects:', selectedSubjectsArray);
@@ -93,7 +93,7 @@ export const SubjectFields: React.FC<SubjectFieldsProps> = ({
             <SelectValue placeholder="Select primary subject" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            {subjects.map((subject: string) => (
+            {subjects.map((subject) => (
               <SelectItem 
                 key={subject} 
                 value={subject} 
