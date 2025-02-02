@@ -36,12 +36,12 @@ export const StatusFields = ({
         <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
           <Select value={status} onValueChange={onStatusChange}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white text-foreground">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="active" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Active</SelectItem>
-              <SelectItem value="inactive" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Inactive</SelectItem>
+              <SelectItem value="active" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full text-foreground">Active</SelectItem>
+              <SelectItem value="inactive" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full text-foreground">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -49,12 +49,12 @@ export const StatusFields = ({
       <div className="space-y-2">
         <Label htmlFor="isPrimaryTeacher">Primary Teacher</Label>
         <Select value={isPrimaryTeacher} onValueChange={onIsPrimaryTeacherChange}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white text-foreground">
             <SelectValue placeholder="Is primary teacher?" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="yes" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Yes</SelectItem>
-            <SelectItem value="no" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">No</SelectItem>
+            <SelectItem value="yes" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full text-foreground">Yes</SelectItem>
+            <SelectItem value="no" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full text-foreground">No</SelectItem>
           </SelectContent>
         </Select>
       </div>
