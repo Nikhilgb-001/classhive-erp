@@ -1,7 +1,8 @@
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileDown, Plus } from "lucide-react";
+import { ArrowLeft, FileDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { AddTeacherDialog } from "@/components/teacher/AddTeacherDialog";
 
 const Teachers = () => {
   const navigate = useNavigate();
@@ -25,10 +26,7 @@ const Teachers = () => {
               <FileDown className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Teacher
-            </Button>
+            <AddTeacherDialog />
           </div>
         </div>
       </div>
