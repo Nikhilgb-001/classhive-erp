@@ -39,7 +39,7 @@ export const ClassSectionFields = ({
       <div className="space-y-2">
         <Label htmlFor="class">Class</Label>
         <Select value={selectedClass} onValueChange={onClassChange}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select class" />
           </SelectTrigger>
           <SelectContent className="bg-white">
@@ -47,7 +47,7 @@ export const ClassSectionFields = ({
               <SelectItem 
                 key={index} 
                 value={className} 
-                className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                className="cursor-pointer hover:bg-gray-100 text-gray-900"
               >
                 {className}
               </SelectItem>
@@ -58,7 +58,7 @@ export const ClassSectionFields = ({
       <div className="space-y-2">
         <Label htmlFor="section">Section</Label>
         <Select value={selectedSection} onValueChange={onSectionChange}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select section" />
           </SelectTrigger>
           <SelectContent className="bg-white">
@@ -66,7 +66,7 @@ export const ClassSectionFields = ({
               <SelectItem 
                 key={index} 
                 value={section} 
-                className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                className="cursor-pointer hover:bg-gray-100 text-gray-900"
               >
                 {section}
               </SelectItem>

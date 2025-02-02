@@ -36,7 +36,7 @@ export const SubjectFields = ({
       <div className="space-y-2">
         <Label htmlFor="subjects">Subjects Handled</Label>
         <Select value={selectedSubjects} onValueChange={onSubjectsChange}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select subjects" />
           </SelectTrigger>
           <SelectContent className="bg-white">
@@ -44,7 +44,7 @@ export const SubjectFields = ({
               <SelectItem 
                 key={index} 
                 value={subject} 
-                className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                className="cursor-pointer hover:bg-gray-100 text-gray-900"
               >
                 {subject}
               </SelectItem>
@@ -55,7 +55,7 @@ export const SubjectFields = ({
       <div className="space-y-2">
         <Label htmlFor="primarySubject">Primary Subject</Label>
         <Select value={primarySubject} onValueChange={onPrimarySubjectChange}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select primary subject" />
           </SelectTrigger>
           <SelectContent className="bg-white">
@@ -63,7 +63,7 @@ export const SubjectFields = ({
               <SelectItem 
                 key={index} 
                 value={subject} 
-                className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
+                className="cursor-pointer hover:bg-gray-100 text-gray-900"
               >
                 {subject}
               </SelectItem>
