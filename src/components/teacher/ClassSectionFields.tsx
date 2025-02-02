@@ -22,7 +22,10 @@ export const ClassSectionFields = ({
   // Function to process array values
   const processArrayValues = (arr: string[] | undefined) => {
     if (!arr || arr.length === 0) return [];
-    return arr.flatMap(item => item.split(',').map(subItem => subItem.trim()));
+    
+    // First, join all array elements and then split by commas
+    const combinedString = arr.join(',');
+    return combinedString.split(',').map(item => item.trim()).filter(Boolean);
   };
 
   const classes = processArrayValues(classConfig?.classes);
