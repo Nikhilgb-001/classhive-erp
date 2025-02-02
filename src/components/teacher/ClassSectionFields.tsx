@@ -19,6 +19,18 @@ export const ClassSectionFields = ({
   onClassChange,
   onSectionChange,
 }: ClassSectionFieldsProps) => {
+  // Function to split and flatten array of comma-separated values
+  const splitAndFlatten = (arr: string[] | undefined) => {
+    if (!arr || arr.length === 0) return [];
+    return arr[0].split(',').map(item => item.trim());
+  };
+
+  const classes = splitAndFlatten(classConfig?.classes);
+  const sections = splitAndFlatten(classConfig?.sections);
+
+  console.log('Available classes:', classes);
+  console.log('Available sections:', sections);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
@@ -28,13 +40,13 @@ export const ClassSectionFields = ({
             <SelectValue placeholder="Select class" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            {classConfig?.classes[0].split(',').map((className: string, index: number) => (
+            {classes.map((className: string, index: number) => (
               <SelectItem 
                 key={index} 
-                value={className.trim()} 
+                value={className} 
                 className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
               >
-                {className.trim()}
+                {className}
               </SelectItem>
             ))}
           </SelectContent>
@@ -47,13 +59,13 @@ export const ClassSectionFields = ({
             <SelectValue placeholder="Select section" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            {classConfig?.sections[0].split(',').map((section: string, index: number) => (
+            {sections.map((section: string, index: number) => (
               <SelectItem 
                 key={index} 
-                value={section.trim()} 
+                value={section} 
                 className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
               >
-                {section.trim()}
+                {section}
               </SelectItem>
             ))}
           </SelectContent>

@@ -18,6 +18,16 @@ export const SubjectFields = ({
   onSubjectsChange,
   onPrimarySubjectChange,
 }: SubjectFieldsProps) => {
+  // Function to split and flatten array of comma-separated values
+  const splitAndFlatten = (arr: string[] | undefined) => {
+    if (!arr || arr.length === 0) return [];
+    return arr[0].split(',').map(item => item.trim());
+  };
+
+  const subjects = splitAndFlatten(classConfig?.subjects);
+  
+  console.log('Available subjects:', subjects);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
@@ -27,13 +37,13 @@ export const SubjectFields = ({
             <SelectValue placeholder="Select subjects" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            {classConfig?.subjects[0].split(',').map((subject: string, index: number) => (
+            {subjects.map((subject: string, index: number) => (
               <SelectItem 
                 key={index} 
-                value={subject.trim()} 
+                value={subject} 
                 className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
               >
-                {subject.trim()}
+                {subject}
               </SelectItem>
             ))}
           </SelectContent>
@@ -46,13 +56,13 @@ export const SubjectFields = ({
             <SelectValue placeholder="Select primary subject" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            {classConfig?.subjects[0].split(',').map((subject: string, index: number) => (
+            {subjects.map((subject: string, index: number) => (
               <SelectItem 
                 key={index} 
-                value={subject.trim()} 
+                value={subject} 
                 className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
               >
-                {subject.trim()}
+                {subject}
               </SelectItem>
             ))}
           </SelectContent>
