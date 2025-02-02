@@ -19,7 +19,7 @@ const Classes = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Class Management</h1>
+            <h1 className="text-2xl font-bold text-primary">Class Management</h1>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline">

@@ -34,14 +34,14 @@ export const ClassConfigurationList = () => {
       {configurations.map((config) => (
         <Card key={config.id} className="bg-white">
           <CardHeader>
-            <CardTitle>
+            <CardTitle className="text-primary">
               {config.schools?.school_name || 'School Configuration'}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 md:grid-cols-3">
               <div>
-                <h3 className="font-semibold mb-2">Classes</h3>
+                <h3 className="font-semibold mb-2 text-primary">Classes</h3>
                 <ul className="space-y-1">
                   {config.classes.map((className, index) => (
                     <li key={index} className="text-sm text-gray-600">{className}</li>
@@ -49,7 +49,7 @@ export const ClassConfigurationList = () => {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Sections</h3>
+                <h3 className="font-semibold mb-2 text-primary">Sections</h3>
                 <ul className="space-y-1">
                   {config.sections.map((section, index) => (
                     <li key={index} className="text-sm text-gray-600">{section}</li>
@@ -57,7 +57,7 @@ export const ClassConfigurationList = () => {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Subjects</h3>
+                <h3 className="font-semibold mb-2 text-primary">Subjects</h3>
                 <ul className="space-y-1">
                   {config.subjects.map((subject, index) => (
                     <li key={index} className="text-sm text-gray-600">{subject}</li>
