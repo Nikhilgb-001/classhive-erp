@@ -42,35 +42,50 @@ const Classes = () => {
 
       console.log('Processing configurations for CSV:', configurations);
 
-      // Convert the data to CSV format with proper column structure
+      // Prepare headers and data rows
       const headers = ['School Name', 'School Code', 'Classes', 'Sections', 'Subjects'];
       const csvRows = [headers];
 
       configurations.forEach((config) => {
-        // Create a single row with each array joined into a single cell
+        // Format arrays by joining with commas and ensuring proper spacing
+        const formattedClasses = Array.isArray(config.classes) 
+          ? config.classes.map(c => c.trim()).join(', ')
+          : '';
+        const formattedSections = Array.isArray(config.sections)
+          ? config.sections.map(s => s.trim()).join(', ')
+          : '';
+        const formattedSubjects = Array.isArray(config.subjects)
+          ? config.subjects.map(s => s.trim()).join(', ')
+          : '';
+
         csvRows.push([
           config.schools?.school_name || 'N/A',
           config.schools?.school_code || 'N/A',
-          Array.isArray(config.classes) ? config.classes.join(' ') : '',
-          Array.isArray(config.sections) ? config.sections.join(' ') : '',
-          Array.isArray(config.subjects) ? config.subjects.join(' ') : ''
+          formattedClasses,
+          formattedSections,
+          formattedSubjects
         ]);
       });
 
-      // Create CSV content with proper escaping for cells containing commas
+      // Create CSV content with proper escaping and formatting
       const csvContent = csvRows.map(row => 
-        row.map(cell => 
-          // Wrap cells in quotes and escape existing quotes
-          `"${String(cell).replace(/"/g, '""')}"`
-        ).join(',')
+        row.map(cell => {
+          // Clean the cell content and escape special characters
+          const cleanedCell = String(cell)
+            .replace(/"/g, '""') // Escape quotes
+            .trim();
+          return `"${cleanedCell}"`; // Wrap in quotes
+        }).join(',')
       ).join('\n');
 
+      // Create and trigger download
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
+      const timestamp = new Date().toISOString().split('T')[0];
       
       link.setAttribute('href', url);
-      link.setAttribute('download', 'class_configurations.csv');
+      link.setAttribute('download', `class_configurations_${timestamp}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
