@@ -42,23 +42,29 @@ const Classes = () => {
 
       console.log('Processing configurations for CSV:', configurations);
 
-      // Convert the data to CSV format
+      // Convert the data to CSV format with proper column structure
       const headers = ['School Name', 'School Code', 'Classes', 'Sections', 'Subjects'];
       const csvRows = [headers];
 
       configurations.forEach((config) => {
-        const row = [
+        // Create a single row with each array joined into a single cell
+        csvRows.push([
           config.schools?.school_name || 'N/A',
           config.schools?.school_code || 'N/A',
-          config.classes.join(', '),
-          config.sections.join(', '),
-          config.subjects.join(', ')
-        ];
-        csvRows.push(row);
+          Array.isArray(config.classes) ? config.classes.join(' ') : '',
+          Array.isArray(config.sections) ? config.sections.join(' ') : '',
+          Array.isArray(config.subjects) ? config.subjects.join(' ') : ''
+        ]);
       });
 
-      // Create CSV content
-      const csvContent = csvRows.map(row => row.join(',')).join('\n');
+      // Create CSV content with proper escaping for cells containing commas
+      const csvContent = csvRows.map(row => 
+        row.map(cell => 
+          // Wrap cells in quotes and escape existing quotes
+          `"${String(cell).replace(/"/g, '""')}"`
+        ).join(',')
+      ).join('\n');
+
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
