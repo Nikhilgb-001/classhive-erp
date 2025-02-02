@@ -1,14 +1,15 @@
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { PersonalInfoFields } from "@/components/teacher/PersonalInfoFields";
+import { ClassSectionFields } from "@/components/teacher/ClassSectionFields";
+import { SubjectFields } from "@/components/teacher/SubjectFields";
+import { StatusFields } from "@/components/teacher/StatusFields";
 
 const NewTeacher = () => {
   const navigate = useNavigate();
@@ -17,6 +18,9 @@ const NewTeacher = () => {
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [selectedSubjects, setSelectedSubjects] = useState<string>("");
   const [primarySubject, setPrimarySubject] = useState<string>("");
+  const [qualification, setQualification] = useState<string>("");
+  const [status, setStatus] = useState<string>("active");
+  const [isPrimaryTeacher, setIsPrimaryTeacher] = useState<string>("no");
 
   // Fetch class configurations
   const { data: classConfig, isLoading } = useQuery({
@@ -48,6 +52,16 @@ const NewTeacher = () => {
     navigate('/school-admin/teachers');
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case 'qualification':
+        setQualification(value);
+        break;
+      // Add other input fields as needed
+    }
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -67,161 +81,33 @@ const NewTeacher = () => {
         </div>
         <div className="w-full max-w-[1400px] mx-auto">
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  required
-                  placeholder="Enter first name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  required
-                  placeholder="Enter last name"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="Enter email address"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                placeholder="Enter phone number"
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="class">Class</Label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select class" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {classConfig?.classes.map((className: string, index: number) => (
-                      <SelectItem 
-                        key={index} 
-                        value={className} 
-                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
-                      >
-                        {className}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="section">Section</Label>
-                <Select value={selectedSection} onValueChange={setSelectedSection}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select section" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {classConfig?.sections.map((section: string, index: number) => (
-                      <SelectItem 
-                        key={index} 
-                        value={section} 
-                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
-                      >
-                        {section}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="subjects">Subjects Handled</Label>
-                <Select value={selectedSubjects} onValueChange={setSelectedSubjects}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select subjects" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {classConfig?.subjects.map((subject: string, index: number) => (
-                      <SelectItem 
-                        key={index} 
-                        value={subject} 
-                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
-                      >
-                        {subject}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="primarySubject">Primary Subject</Label>
-                <Select value={primarySubject} onValueChange={setPrimarySubject}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select primary subject" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {classConfig?.subjects.map((subject: string, index: number) => (
-                      <SelectItem 
-                        key={index} 
-                        value={subject} 
-                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full"
-                      >
-                        {subject}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="qualification">Qualification</Label>
-                <Input
-                  id="qualification"
-                  name="qualification"
-                  required
-                  placeholder="Enter qualification"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue="active">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="active" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Active</SelectItem>
-                    <SelectItem value="inactive" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="isPrimaryTeacher">Primary Teacher</Label>
-              <Select defaultValue="no">
-                <SelectTrigger>
-                  <SelectValue placeholder="Is primary teacher?" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem value="yes" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">Yes</SelectItem>
-                  <SelectItem value="no" className="cursor-pointer hover:bg-gray-100 py-2 px-4 block w-full">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <PersonalInfoFields onChange={handleInputChange} />
+            
+            <ClassSectionFields
+              classConfig={classConfig}
+              selectedClass={selectedClass}
+              selectedSection={selectedSection}
+              onClassChange={setSelectedClass}
+              onSectionChange={setSelectedSection}
+            />
+            
+            <SubjectFields
+              classConfig={classConfig}
+              selectedSubjects={selectedSubjects}
+              primarySubject={primarySubject}
+              onSubjectsChange={setSelectedSubjects}
+              onPrimarySubjectChange={setPrimarySubject}
+            />
+            
+            <StatusFields
+              qualification={qualification}
+              status={status}
+              isPrimaryTeacher={isPrimaryTeacher}
+              onQualificationChange={handleInputChange}
+              onStatusChange={setStatus}
+              onIsPrimaryTeacherChange={setIsPrimaryTeacher}
+            />
+            
             <Button type="submit" className="w-full">Add Teacher</Button>
           </form>
         </div>
