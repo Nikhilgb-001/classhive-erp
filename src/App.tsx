@@ -18,6 +18,7 @@ import SchoolAdmin from "./pages/school-admin/SchoolAdmin";
 import Classes from "./pages/school-admin/Classes";
 import NewClass from "./pages/school-admin/NewClass";
 import Teachers from "./pages/school-admin/Teachers";
+import NewTeacher from "./pages/school-admin/NewTeacher";
 import Students from "./pages/school-admin/Students";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/school-admin/classes" element={<Classes />} />
           <Route path="/school-admin/classes/new" element={<NewClass />} />
           <Route path="/school-admin/teachers" element={<Teachers />} />
+          <Route path="/school-admin/teachers/new" element={<NewTeacher />} />
           <Route path="/school-admin/students" element={<Students />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
