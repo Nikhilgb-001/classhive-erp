@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => {
+export const ClassConfigurationForm = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,7 +44,6 @@ export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => 
     setIsLoading(true);
 
     try {
-      // Get the current school's ID
       const { data: schoolData, error: schoolError } = await supabase
         .from("schools")
         .select("id")
@@ -50,7 +51,6 @@ export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => 
 
       if (schoolError) throw schoolError;
 
-      // Filter out empty values and create arrays
       const classes = formData.classes.filter(c => c.trim());
       const sections = formData.sections.filter(s => s.trim());
       const subjects = formData.subjects.filter(s => s.trim());
@@ -70,7 +70,7 @@ export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => 
         title: "Success",
         description: "Class configuration saved successfully",
       });
-      onClose();
+      navigate('/school-admin/classes');
     } catch (error) {
       console.error("Error saving class configuration:", error);
       toast({
@@ -109,14 +109,6 @@ export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => 
                 )}
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => addField("classes")}
-              className="w-full"
-            >
-              Add Class
-            </Button>
           </div>
         </div>
 
@@ -143,14 +135,6 @@ export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => 
                 )}
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => addField("sections")}
-              className="w-full"
-            >
-              Add Section
-            </Button>
           </div>
         </div>
 
@@ -177,20 +161,16 @@ export const ClassConfigurationForm = ({ onClose }: { onClose: () => void }) => 
                 )}
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => addField("subjects")}
-              className="w-full"
-            >
-              Add Subject
-            </Button>
           </div>
         </div>
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onClose}>
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={() => navigate('/school-admin/classes')}
+        >
           Cancel
         </Button>
         <Button type="submit" disabled={isLoading}>
