@@ -2,13 +2,39 @@ import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const NewTeacher = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [selectedClass, setSelectedClass] = useState<string>("");
+  const [selectedSection, setSelectedSection] = useState<string>("");
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+
+  // Fetch class configurations
+  const { data: classConfig, isLoading } = useQuery({
+    queryKey: ['class-configurations'],
+    queryFn: async () => {
+      console.log('Fetching class configurations');
+      const { data, error } = await supabase
+        .from('class_configurations')
+        .select('*')
+        .single();
+      
+      if (error) {
+        console.error('Error fetching class configurations:', error);
+        throw error;
+      }
+      console.log('Class configurations fetched:', data);
+      return data;
+    }
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +46,10 @@ const NewTeacher = () => {
     });
     navigate('/school-admin/teachers');
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <AppLayout>
@@ -76,23 +106,89 @@ const NewTeacher = () => {
                 placeholder="Enter phone number"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                name="subject"
-                required
-                placeholder="Enter subject"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="class">Class</Label>
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classConfig?.classes.map((className: string, index: number) => (
+                      <SelectItem key={index} value={className}>
+                        {className}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="section">Section</Label>
+                <Select value={selectedSection} onValueChange={setSelectedSection}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select section" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classConfig?.sections.map((section: string, index: number) => (
+                      <SelectItem key={index} value={section}>
+                        {section}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="qualification">Qualification</Label>
-              <Input
-                id="qualification"
-                name="qualification"
-                required
-                placeholder="Enter qualification"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classConfig?.subjects.map((subject: string, index: number) => (
+                      <SelectItem key={index} value={subject}>
+                        {subject}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="isPrimaryTeacher">Primary Teacher</Label>
+                <Select defaultValue="no">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Is primary teacher?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="qualification">Qualification</Label>
+                <Input
+                  id="qualification"
+                  name="qualification"
+                  required
+                  placeholder="Enter qualification"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select defaultValue="active">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <Button type="submit" className="w-full">Add Teacher</Button>
           </form>
