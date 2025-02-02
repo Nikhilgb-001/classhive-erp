@@ -26,12 +26,16 @@ export const SubjectFields: React.FC<SubjectFieldsProps> = ({
 }) => {
   const processArrayValues = (arr: string[] | undefined) => {
     if (!arr || arr.length === 0) return [];
-    // Since the data comes as ["subject1, subject2"], we need to handle this format
-    return arr[0].split(',').map(item => item.trim()).filter(Boolean);
+    // Handle the case where subjects come as a single string with comma-separated values
+    const subjectsString = Array.isArray(arr) ? arr[0] || "" : "";
+    return subjectsString.split(',').map(item => item.trim()).filter(Boolean);
   };
 
-  const subjects = processArrayValues(classConfig?.subjects);
-  const selectedSubjectsArray = selectedSubjects ? selectedSubjects.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const subjects = React.useMemo(() => processArrayValues(classConfig?.subjects), [classConfig?.subjects]);
+  const selectedSubjectsArray = React.useMemo(
+    () => selectedSubjects ? selectedSubjects.split(',').map(s => s.trim()).filter(Boolean) : [],
+    [selectedSubjects]
+  );
   
   console.log('Available subjects:', subjects);
   console.log('Selected subjects:', selectedSubjectsArray);
