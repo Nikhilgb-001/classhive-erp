@@ -136,6 +136,65 @@ export type Database = {
         }
         Relationships: []
       }
+      teachers: {
+        Row: {
+          class: string | null
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          is_primary_teacher: boolean | null
+          last_name: string
+          phone: string
+          primary_subject: string | null
+          qualification: string
+          school_id: string
+          section: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          class?: string | null
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          is_primary_teacher?: boolean | null
+          last_name: string
+          phone: string
+          primary_subject?: string | null
+          qualification: string
+          school_id: string
+          section?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          class?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          is_primary_teacher?: boolean | null
+          last_name?: string
+          phone?: string
+          primary_subject?: string | null
+          qualification?: string
+          school_id?: string
+          section?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teachers_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
