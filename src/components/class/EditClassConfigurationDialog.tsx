@@ -89,13 +89,18 @@ export const EditClassConfigurationDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex items-center gap-2 bg-white text-gray-700 hover:bg-gray-100"
+        >
           <Pencil className="h-4 w-4" />
+          Edit
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl bg-white">
         <DialogHeader>
-          <DialogTitle>Edit Class Configuration</DialogTitle>
+          <DialogTitle className="text-gray-900">Edit Class Configuration</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <FormSection
@@ -127,6 +132,7 @@ export const EditClassConfigurationDialog = ({
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="text-gray-700"
             >
               Cancel
             </Button>
