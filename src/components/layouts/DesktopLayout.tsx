@@ -74,7 +74,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
               <span className="text-gray-900">Anil</span>
             </div>
           </header>
-          <main className="p-6 w-full bg-secondary min-h-[calc(100vh-4rem)]">
+          <main className="p-6 w-full bg-[#F1F1F1] min-h-[calc(100vh-4rem)]">
             {children}
           </main>
         </div>
