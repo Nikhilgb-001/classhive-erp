@@ -42,52 +42,49 @@ const Classes = () => {
 
       console.log('Processing configurations for CSV:', configurations);
 
-      // Prepare headers and data rows
+      // Prepare CSV data with proper formatting
       const headers = ['School Name', 'School Code', 'Classes', 'Sections', 'Subjects'];
-      const csvRows = [headers];
+      const rows = configurations.map(config => {
+        const formatArray = (arr: string[] | null) => 
+          Array.isArray(arr) ? arr.map(item => item.trim()).join('; ') : '';
 
-      configurations.forEach((config) => {
-        // Format arrays by joining with commas and ensuring proper spacing
-        const formattedClasses = Array.isArray(config.classes) 
-          ? config.classes.map(c => c.trim()).join(', ')
-          : '';
-        const formattedSections = Array.isArray(config.sections)
-          ? config.sections.map(s => s.trim()).join(', ')
-          : '';
-        const formattedSubjects = Array.isArray(config.subjects)
-          ? config.subjects.map(s => s.trim()).join(', ')
-          : '';
-
-        csvRows.push([
+        return [
           config.schools?.school_name || 'N/A',
           config.schools?.school_code || 'N/A',
-          formattedClasses,
-          formattedSections,
-          formattedSubjects
-        ]);
+          formatArray(config.classes),
+          formatArray(config.sections),
+          formatArray(config.subjects)
+        ];
       });
 
-      // Create CSV content with proper escaping and formatting
-      const csvContent = csvRows.map(row => 
-        row.map(cell => {
-          // Clean the cell content and escape special characters
-          const cleanedCell = String(cell)
-            .replace(/"/g, '""') // Escape quotes
-            .trim();
-          return `"${cleanedCell}"`; // Wrap in quotes
-        }).join(',')
-      ).join('\n');
+      // Create CSV content
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => 
+          row.map(cell => {
+            const escaped = String(cell).replace(/"/g, '""').replace(/\n/g, ' ');
+            return `"${escaped}"`;
+          }).join(',')
+        )
+      ].join('\n');
 
-      // Create and trigger download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
+      // Create blob and download
+      const blob = new Blob([csvContent], { 
+        type: 'text/csv;charset=utf-8;'
+      });
+      const url = window.URL.createObjectURL(blob);
       const timestamp = new Date().toISOString().split('T')[0];
-      
-      link.setAttribute('href', url);
-      link.setAttribute('download', `class_configurations_${timestamp}.csv`);
+      const filename = `class_configurations_${timestamp}.csv`;
+
+      // Create download link
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
       toast({
