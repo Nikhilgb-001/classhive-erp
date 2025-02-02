@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ChevronsUpDown } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { SubjectList } from "./subjects/SubjectList";
+import { SubjectSelect } from "./subjects/SubjectSelect";
+import { processSubjectsArray } from "./subjects/utils";
 
 interface SubjectFieldsProps {
   classConfig: {
@@ -24,14 +25,11 @@ export const SubjectFields: React.FC<SubjectFieldsProps> = ({
   onSubjectsChange,
   onPrimarySubjectChange,
 }) => {
-  const processArrayValues = (arr: string[] | undefined) => {
-    if (!arr || arr.length === 0) return [];
-    // Handle the case where subjects come as a single string with comma-separated values
-    const subjectsString = Array.isArray(arr) ? arr[0] || "" : "";
-    return subjectsString.split(',').map(item => item.trim()).filter(Boolean);
-  };
-
-  const subjects = React.useMemo(() => processArrayValues(classConfig?.subjects), [classConfig?.subjects]);
+  const subjects = React.useMemo(
+    () => processSubjectsArray(classConfig?.subjects),
+    [classConfig?.subjects]
+  );
+  
   const selectedSubjectsArray = React.useMemo(
     () => selectedSubjects ? selectedSubjects.split(',').map(s => s.trim()).filter(Boolean) : [],
     [selectedSubjects]
@@ -72,19 +70,11 @@ export const SubjectFields: React.FC<SubjectFieldsProps> = ({
               <CommandInput placeholder="Search subjects..." className="h-9" />
               <CommandEmpty>No subject found.</CommandEmpty>
               <CommandGroup>
-                {subjects.map((subject) => (
-                  <CommandItem
-                    key={subject}
-                    onSelect={() => handleSubjectToggle(subject)}
-                    className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-md cursor-pointer"
-                  >
-                    <Checkbox
-                      checked={selectedSubjectsArray.includes(subject)}
-                      onCheckedChange={() => handleSubjectToggle(subject)}
-                    />
-                    <span className="text-sm text-foreground">{subject}</span>
-                  </CommandItem>
-                ))}
+                <SubjectList
+                  subjects={subjects}
+                  selectedSubjects={selectedSubjectsArray}
+                  onSubjectToggle={handleSubjectToggle}
+                />
               </CommandGroup>
             </Command>
           </PopoverContent>
@@ -92,22 +82,11 @@ export const SubjectFields: React.FC<SubjectFieldsProps> = ({
       </div>
       <div className="space-y-2">
         <Label htmlFor="primarySubject">Primary Subject</Label>
-        <Select value={primarySubject} onValueChange={onPrimarySubjectChange}>
-          <SelectTrigger className="bg-white text-foreground">
-            <SelectValue placeholder="Select primary subject" />
-          </SelectTrigger>
-          <SelectContent className="bg-white">
-            {subjects.map((subject) => (
-              <SelectItem 
-                key={subject} 
-                value={subject} 
-                className="cursor-pointer hover:bg-gray-100 text-foreground"
-              >
-                {subject}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SubjectSelect
+          subjects={subjects}
+          value={primarySubject}
+          onValueChange={onPrimarySubjectChange}
+        />
       </div>
     </div>
   );
