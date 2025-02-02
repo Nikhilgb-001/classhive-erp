@@ -1,6 +1,10 @@
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SubjectFieldsProps {
   classConfig: {
@@ -31,32 +35,57 @@ export const SubjectFields = ({
   console.log('Available subjects:', subjects);
   console.log('Selected subjects:', selectedSubjectsArray);
 
-  const handleSubjectsChange = (value: string[]) => {
-    onSubjectsChange(value.join(','));
+  const handleSubjectToggle = (subject: string) => {
+    const currentSelected = new Set(selectedSubjectsArray);
+    if (currentSelected.has(subject)) {
+      currentSelected.delete(subject);
+    } else {
+      currentSelected.add(subject);
+    }
+    onSubjectsChange(Array.from(currentSelected).join(','));
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
         <Label htmlFor="subjects">Subjects Handled</Label>
-        <div className="border rounded-md p-4 bg-white">
-          <ToggleGroup 
-            type="multiple" 
-            className="flex flex-wrap gap-2"
-            value={selectedSubjectsArray}
-            onValueChange={handleSubjectsChange}
-          >
-            {subjects.map((subject: string, index: number) => (
-              <ToggleGroupItem 
-                key={index} 
-                value={subject}
-                className="bg-white border-2 border-gray-200 text-foreground hover:bg-gray-100"
-              >
-                {subject}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              className="w-full justify-between bg-white text-foreground hover:bg-gray-100"
+            >
+              {selectedSubjectsArray.length === 0
+                ? "Select subjects"
+                : `${selectedSubjectsArray.length} selected`}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0 bg-white">
+            <div className="space-y-2 p-4">
+              {subjects.map((subject) => (
+                <div
+                  key={subject}
+                  className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-md cursor-pointer"
+                  onClick={() => handleSubjectToggle(subject)}
+                >
+                  <Checkbox
+                    id={`subject-${subject}`}
+                    checked={selectedSubjectsArray.includes(subject)}
+                    onCheckedChange={() => handleSubjectToggle(subject)}
+                  />
+                  <label
+                    htmlFor={`subject-${subject}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground cursor-pointer"
+                  >
+                    {subject}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="space-y-2">
         <Label htmlFor="primarySubject">Primary Subject</Label>
