@@ -18,13 +18,13 @@ export const SubjectFields = ({
   onSubjectsChange,
   onPrimarySubjectChange,
 }: SubjectFieldsProps) => {
-  // Function to split and flatten array of comma-separated values
-  const splitAndFlatten = (arr: string[] | undefined) => {
+  // Function to process array values
+  const processArrayValues = (arr: string[] | undefined) => {
     if (!arr || arr.length === 0) return [];
-    return arr[0].split(',').map(item => item.trim());
+    return arr.flatMap(item => item.split(',').map(subItem => subItem.trim()));
   };
 
-  const subjects = splitAndFlatten(classConfig?.subjects);
+  const subjects = processArrayValues(classConfig?.subjects);
   
   console.log('Available subjects:', subjects);
 

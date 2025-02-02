@@ -19,14 +19,14 @@ export const ClassSectionFields = ({
   onClassChange,
   onSectionChange,
 }: ClassSectionFieldsProps) => {
-  // Function to split and flatten array of comma-separated values
-  const splitAndFlatten = (arr: string[] | undefined) => {
+  // Function to process array values
+  const processArrayValues = (arr: string[] | undefined) => {
     if (!arr || arr.length === 0) return [];
-    return arr[0].split(',').map(item => item.trim());
+    return arr.flatMap(item => item.split(',').map(subItem => subItem.trim()));
   };
 
-  const classes = splitAndFlatten(classConfig?.classes);
-  const sections = splitAndFlatten(classConfig?.sections);
+  const classes = processArrayValues(classConfig?.classes);
+  const sections = processArrayValues(classConfig?.sections);
 
   console.log('Available classes:', classes);
   console.log('Available sections:', sections);
