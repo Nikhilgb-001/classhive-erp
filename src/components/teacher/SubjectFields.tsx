@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import * as React from "react";
 
 interface SubjectFieldsProps {
   classConfig: {
@@ -16,13 +17,13 @@ interface SubjectFieldsProps {
   onPrimarySubjectChange: (value: string) => void;
 }
 
-export const SubjectFields = ({
+export const SubjectFields: React.FC<SubjectFieldsProps> = ({
   classConfig,
   selectedSubjects,
   primarySubject,
   onSubjectsChange,
   onPrimarySubjectChange,
-}: SubjectFieldsProps) => {
+}) => {
   const processArrayValues = (arr: string[] | undefined) => {
     if (!arr || arr.length === 0) return [];
     const combinedString = arr.join(',');
