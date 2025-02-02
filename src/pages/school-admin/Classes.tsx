@@ -2,7 +2,6 @@ import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ClassConfigurationForm } from "@/components/class/ClassConfigurationForm";
 
 const Classes = () => {
   const navigate = useNavigate();
@@ -26,11 +25,11 @@ const Classes = () => {
               <FileDown className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Class
+            </Button>
           </div>
-        </div>
-
-        <div className="max-w-2xl mx-auto">
-          <ClassConfigurationForm />
         </div>
       </div>
     </AppLayout>
