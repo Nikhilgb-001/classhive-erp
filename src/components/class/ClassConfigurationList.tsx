@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditClassConfigurationDialog } from "./EditClassConfigurationDialog";
 
 export const ClassConfigurationList = () => {
-  const { data: configurations, isLoading } = useQuery({
+  const { data: configurations, isLoading, refetch } = useQuery({
     queryKey: ['class-configurations'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -34,9 +35,18 @@ export const ClassConfigurationList = () => {
       {configurations.map((config) => (
         <Card key={config.id} className="bg-white">
           <CardHeader>
-            <CardTitle className="text-primary">
-              {config.schools?.school_name || 'School Configuration'}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-primary">
+                {config.schools?.school_name || 'School Configuration'}
+              </CardTitle>
+              <EditClassConfigurationDialog
+                id={config.id}
+                initialClasses={config.classes}
+                initialSections={config.sections}
+                initialSubjects={config.subjects}
+                onUpdate={refetch}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 md:grid-cols-3">
