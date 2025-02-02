@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      class_configurations: {
+        Row: {
+          classes: string[]
+          created_at: string
+          id: string
+          school_id: string
+          sections: string[]
+          subjects: string[]
+          updated_at: string
+        }
+        Insert: {
+          classes?: string[]
+          created_at?: string
+          id?: string
+          school_id: string
+          sections?: string[]
+          subjects?: string[]
+          updated_at?: string
+        }
+        Update: {
+          classes?: string[]
+          created_at?: string
+          id?: string
+          school_id?: string
+          sections?: string[]
+          subjects?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_configurations_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           created_at: string
