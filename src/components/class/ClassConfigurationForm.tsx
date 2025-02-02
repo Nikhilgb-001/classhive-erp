@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { FormSection } from "./FormSection";
 
 export const ClassConfigurationForm = () => {
   const navigate = useNavigate();
@@ -24,12 +22,6 @@ export const ClassConfigurationForm = () => {
   ) => {
     const newData = { ...formData };
     newData[field][index] = value;
-    setFormData(newData);
-  };
-
-  const addField = (field: "classes" | "sections" | "subjects") => {
-    const newData = { ...formData };
-    newData[field] = [...newData[field], ""];
     setFormData(newData);
   };
 
@@ -86,83 +78,29 @@ export const ClassConfigurationForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
       <div className="space-y-4">
-        <div>
-          <Label className="text-base font-semibold">Classes</Label>
-          <div className="space-y-2">
-            {formData.classes.map((cls, index) => (
-              <div key={index} className="flex gap-2">
-                <Input
-                  value={cls}
-                  onChange={(e) => handleInputChange(index, "classes", e.target.value)}
-                  placeholder="Enter class (e.g., 1st, 2nd)"
-                  className="flex-1"
-                />
-                {formData.classes.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeField(index, "classes")}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <FormSection
+          title="Classes"
+          items={formData.classes}
+          placeholder="Enter class (e.g., 1st, 2nd)"
+          onInputChange={(index, value) => handleInputChange(index, "classes", value)}
+          onRemove={(index) => removeField(index, "classes")}
+        />
 
-        <div>
-          <Label className="text-base font-semibold">Sections</Label>
-          <div className="space-y-2">
-            {formData.sections.map((section, index) => (
-              <div key={index} className="flex gap-2">
-                <Input
-                  value={section}
-                  onChange={(e) => handleInputChange(index, "sections", e.target.value)}
-                  placeholder="Enter section (e.g., A, B)"
-                  className="flex-1"
-                />
-                {formData.sections.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeField(index, "sections")}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <FormSection
+          title="Sections"
+          items={formData.sections}
+          placeholder="Enter section (e.g., A, B)"
+          onInputChange={(index, value) => handleInputChange(index, "sections", value)}
+          onRemove={(index) => removeField(index, "sections")}
+        />
 
-        <div>
-          <Label className="text-base font-semibold">Subjects</Label>
-          <div className="space-y-2">
-            {formData.subjects.map((subject, index) => (
-              <div key={index} className="flex gap-2">
-                <Input
-                  value={subject}
-                  onChange={(e) => handleInputChange(index, "subjects", e.target.value)}
-                  placeholder="Enter subject (e.g., Mathematics, Science)"
-                  className="flex-1"
-                />
-                {formData.subjects.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeField(index, "subjects")}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <FormSection
+          title="Subjects"
+          items={formData.subjects}
+          placeholder="Enter subject (e.g., Mathematics, Science)"
+          onInputChange={(index, value) => handleInputChange(index, "subjects", value)}
+          onRemove={(index) => removeField(index, "subjects")}
+        />
       </div>
 
       <div className="flex justify-end gap-2">
