@@ -3,9 +3,86 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ClassConfigurationList } from "@/components/class/ClassConfigurationList";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Classes = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleExportCSV = async () => {
+    try {
+      console.log('Fetching class configurations for CSV export');
+      const { data: configurations, error } = await supabase
+        .from('class_configurations')
+        .select(`
+          id,
+          schools:school_id (
+            school_name,
+            school_code
+          ),
+          classes,
+          sections,
+          subjects
+        `);
+
+      if (error) {
+        console.error('Error fetching configurations:', error);
+        throw error;
+      }
+
+      if (!configurations || configurations.length === 0) {
+        toast({
+          title: "No data to export",
+          description: "There are no class configurations to export.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Processing configurations for CSV:', configurations);
+
+      // Convert the data to CSV format
+      const headers = ['School Name', 'School Code', 'Classes', 'Sections', 'Subjects'];
+      const csvRows = [headers];
+
+      configurations.forEach((config) => {
+        const row = [
+          config.schools?.school_name || 'N/A',
+          config.schools?.school_code || 'N/A',
+          config.classes.join(', '),
+          config.sections.join(', '),
+          config.subjects.join(', ')
+        ];
+        csvRows.push(row);
+      });
+
+      // Create CSV content
+      const csvContent = csvRows.map(row => row.join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'class_configurations.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export Successful",
+        description: "Class configurations have been exported to CSV.",
+      });
+
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export class configurations. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <AppLayout>
@@ -22,7 +99,7 @@ const Classes = () => {
             <h1 className="text-2xl font-bold text-primary">Class Management</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExportCSV}>
               <FileDown className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
