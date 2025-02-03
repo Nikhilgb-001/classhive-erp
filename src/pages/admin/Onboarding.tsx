@@ -20,17 +20,33 @@ const AdminOnboarding = () => {
   const { data: userRole } = useQuery({
     queryKey: ['userRole'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
+      try {
+        console.log('Checking user role...');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          console.log('No user found');
+          return null;
+        }
+        console.log('User ID:', user.id);
 
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('role', 'super_admin')
-        .single();
+        const { data: roleData, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'super_admin')
+          .maybeSingle();
 
-      return roleData?.role;
+        if (error) {
+          console.error('Error fetching user role:', error);
+          throw error;
+        }
+
+        console.log('Role data:', roleData);
+        return roleData?.role;
+      } catch (error) {
+        console.error('Error in userRole query:', error);
+        return null;
+      }
     }
   });
 
@@ -42,22 +58,28 @@ const AdminOnboarding = () => {
     queryKey: ['schools', isSuperAdmin],
     queryFn: async () => {
       console.log('Fetching schools as', isSuperAdmin ? 'super admin' : 'school admin');
-      let query = supabase.from('schools').select('*');
-      
-      // If not super admin, filter by admin email
-      if (!isSuperAdmin) {
-        const { data: { user } } = await supabase.auth.getUser();
-        query = query.eq('admin_email', user?.email);
-      }
-      
-      const { data, error } = await query.order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching schools:', error);
+      try {
+        let query = supabase.from('schools').select('*');
+        
+        // If not super admin, filter by admin email
+        if (!isSuperAdmin) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user?.email) throw new Error('No user email found');
+          query = query.eq('admin_email', user.email);
+        }
+        
+        const { data, error } = await query.order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error('Error fetching schools:', error);
+          throw error;
+        }
+        console.log('Fetched schools:', data);
+        return data;
+      } catch (error) {
+        console.error('Error in schools query:', error);
         throw error;
       }
-      console.log('Fetched schools:', data);
-      return data;
     },
     enabled: userRole !== undefined,
   });
