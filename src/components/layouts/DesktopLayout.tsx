@@ -2,7 +2,7 @@ import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupCon
 import { useUserRole } from "@/hooks/useUserRole";
 import { 
   LayoutDashboard, School, BookOpen, GraduationCap, Users,
-  Settings, LogOut
+  Settings, LogOut, Bell
 } from "lucide-react";
 
 const menuItems = [
