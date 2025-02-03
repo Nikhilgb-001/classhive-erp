@@ -7,12 +7,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const mobileMenuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/", color: "#60A5FA" },
-  { icon: Users, label: "Students", href: "/students", color: "#34D399" },
-  { icon: GraduationCap, label: "Teachers", href: "/teachers", color: "#F472B6" },
-  { icon: BookOpen, label: "Classes", href: "/classes", color: "#A78BFA" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/admin", color: "#60A5FA" },
+  { icon: School, label: "School Management", href: "/admin/onboarding", color: "#34D399" },
+  { icon: BookOpen, label: "Class Management", href: "/school-admin/classes", color: "#A78BFA" },
+  { icon: GraduationCap, label: "Teacher Management", href: "/school-admin/teachers", color: "#F472B6" },
+  { icon: Users, label: "Student Management", href: "/school-admin/students", color: "#FBBF24" },
   { icon: ClipboardCheck, label: "Attendance", href: "/attendance", color: "#FBBF24" },
   { icon: FileText, label: "Assignments", href: "/assignments", color: "#60A5FA" },
   { icon: Megaphone, label: "Circulars", href: "/circulars", color: "#F87171" },
@@ -39,6 +41,12 @@ const mobileMenuItems = [
 
 export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
+  const { data: userRole } = useUserRole();
+  const isSuperAdmin = userRole === 'super_admin';
+
+  const filteredMenuItems = isSuperAdmin 
+    ? mobileMenuItems 
+    : mobileMenuItems.filter(item => !item.href.includes('onboarding'));
 
   return (
     <div className="min-h-screen">
@@ -52,7 +60,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
           </SheetTrigger>
           <SheetContent className="bg-[#1A1F2C] border-l border-gray-800">
             <nav className="mt-8">
-              {mobileMenuItems.map((item) => (
+              {filteredMenuItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
@@ -71,7 +79,7 @@ export const MobileLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </main>
       <nav className="fixed bottom-0 left-0 right-0 bg-[#1A1F2C] border-t border-gray-800 py-2 px-6 flex justify-around">
-        {mobileMenuItems.slice(0, 4).map((item) => (
+        {filteredMenuItems.slice(0, 4).map((item) => (
           <a
             key={item.label}
             href={item.href}
