@@ -1,28 +1,42 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { useUserRole } from "@/hooks/useUserRole";
 import { 
-  LayoutDashboard, School, BookOpen, GraduationCap, Users,
-  Settings, LogOut, Bell
+  LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardCheck, 
+  FileText, Megaphone, CalendarDays, Book, StickyNote, Clock, TestTube,
+  Users2, MessageSquare, CalendarMinus, DollarSign, PartyPopper, Image,
+  ChartBar, Library, Bell, BookOpen as Documentation, UserCog, School,
+  Settings, LogOut
 } from "lucide-react";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/admin", color: "#60A5FA" },
-  { icon: School, label: "School Management", href: "/admin/onboarding", color: "#34D399" },
-  { icon: BookOpen, label: "Class Management", href: "/school-admin/classes", color: "#A78BFA" },
-  { icon: GraduationCap, label: "Teacher Management", href: "/school-admin/teachers", color: "#F472B6" },
-  { icon: Users, label: "Student Management", href: "/school-admin/students", color: "#FBBF24" },
-  { icon: Settings, label: "Settings", href: "/settings", color: "#34D399" },
-  { icon: LogOut, label: "Logout", href: "/logout", color: "#F87171" }
+  { icon: LayoutDashboard, label: "Dashboard", href: "/", color: "#60A5FA" }, // Blue
+  { icon: Users, label: "Students", href: "/students", color: "#34D399" }, // Green
+  { icon: GraduationCap, label: "Teachers", href: "/teachers", color: "#F472B6" }, // Pink
+  { icon: BookOpen, label: "Classes", href: "/classes", color: "#A78BFA" }, // Purple
+  { icon: ClipboardCheck, label: "Attendance", href: "/attendance", color: "#FBBF24" }, // Yellow
+  { icon: FileText, label: "Assignments", href: "/assignments", color: "#60A5FA" }, // Blue
+  { icon: Megaphone, label: "Circulars", href: "/circulars", color: "#F87171" }, // Red
+  { icon: CalendarDays, label: "Calendar", href: "/calendar", color: "#34D399" }, // Green
+  { icon: Book, label: "Homework", href: "/homework", color: "#A78BFA" }, // Purple
+  { icon: StickyNote, label: "Notice Board", href: "/notice-board", color: "#FBBF24" }, // Yellow
+  { icon: Clock, label: "Time Table", href: "/time-table", color: "#F472B6" }, // Pink
+  { icon: TestTube, label: "Tests", href: "/tests", color: "#60A5FA" }, // Blue
+  { icon: Users2, label: "Meetings", href: "/meetings", color: "#34D399" }, // Green
+  { icon: MessageSquare, label: "Chat with Staff", href: "/chat", color: "#F87171" }, // Red
+  { icon: CalendarMinus, label: "Leave Request", href: "/leave-request", color: "#A78BFA" }, // Purple
+  { icon: DollarSign, label: "Fee Details", href: "/fee-details", color: "#FBBF24" }, // Yellow
+  { icon: PartyPopper, label: "Events", href: "/events", color: "#F472B6" }, // Pink
+  { icon: Image, label: "Gallery", href: "/gallery", color: "#60A5FA" }, // Blue
+  { icon: ChartBar, label: "Results", href: "/results", color: "#34D399" }, // Green
+  { icon: Library, label: "Library", href: "/library", color: "#F87171" }, // Red
+  { icon: Bell, label: "Notifications", href: "/notifications", color: "#A78BFA" }, // Purple
+  { icon: Documentation, label: "Documentation", href: "/documentation", color: "#FBBF24" }, // Yellow
+  { icon: UserCog, label: "Super Admin", href: "/admin", color: "#F472B6" }, // Changed from "Admin" to "Super Admin"
+  { icon: School, label: "School Admin", href: "/school-admin", color: "#60A5FA" }, // Blue
+  { icon: Settings, label: "Settings", href: "/settings", color: "#34D399" }, // Green
+  { icon: LogOut, label: "Logout", href: "/logout", color: "#F87171" } // Red
 ];
 
 export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
-  const { data: userRole } = useUserRole();
-  const isSuperAdmin = userRole === 'super_admin';
-
-  const filteredMenuItems = isSuperAdmin 
-    ? menuItems 
-    : menuItems.filter(item => !item.href.includes('onboarding'));
-
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -34,7 +48,7 @@ export const DesktopLayout = ({ children }: { children: React.ReactNode }) => {
             <SidebarContent>
               <SidebarGroup>
                 <SidebarGroupContent className="[&_li]:list-none">
-                  {filteredMenuItems.map((item) => (
+                  {menuItems.map((item) => (
                     <SidebarMenuItem key={item.label}>
                       <SidebarMenuButton asChild>
                         <a 
