@@ -16,14 +16,41 @@ const AdminOnboarding = () => {
   const navigate = useNavigate();
   const [selectedSchool, setSelectedSchool] = useState(null);
 
-  const { data: schools, isLoading, error } = useQuery({
-    queryKey: ['schools'],
+  // First, check if the user is a super admin
+  const { data: userRole } = useQuery({
+    queryKey: ['userRole'],
     queryFn: async () => {
-      console.log('Fetching schools...');
-      const { data, error } = await supabase
-        .from('schools')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'super_admin')
+        .single();
+
+      return roleData?.role;
+    }
+  });
+
+  const isSuperAdmin = userRole === 'super_admin';
+  console.log('Is super admin:', isSuperAdmin);
+
+  // Fetch schools based on user role
+  const { data: schools, isLoading, error } = useQuery({
+    queryKey: ['schools', isSuperAdmin],
+    queryFn: async () => {
+      console.log('Fetching schools as', isSuperAdmin ? 'super admin' : 'school admin');
+      let query = supabase.from('schools').select('*');
+      
+      // If not super admin, filter by admin email
+      if (!isSuperAdmin) {
+        const { data: { user } } = await supabase.auth.getUser();
+        query = query.eq('admin_email', user?.email);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching schools:', error);
@@ -32,9 +59,7 @@ const AdminOnboarding = () => {
       console.log('Fetched schools:', data);
       return data;
     },
-    // Add retry and stale time configurations
-    retry: 3,
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    enabled: userRole !== undefined,
   });
 
   const handleExportCSV = () => {
@@ -115,7 +140,9 @@ const AdminOnboarding = () => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-semibold text-[#1A1F2C]">School Onboarding</h1>
+          <h1 className="text-2xl font-semibold text-[#1A1F2C]">
+            {isSuperAdmin ? 'All Schools Management' : 'School Management'}
+          </h1>
         </div>
         <div className="flex justify-end gap-3">
           <Button 
@@ -131,7 +158,7 @@ const AdminOnboarding = () => {
             className="bg-[#1A1F2C] text-white hover:bg-[#2A2F3C]"
           >
             <Plus className="w-4 h-4 mr-2" />
-            New Onboarding
+            New School
           </Button>
         </div>
 
@@ -148,7 +175,6 @@ const AdminOnboarding = () => {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                // Show loading skeleton rows
                 Array.from({ length: 3 }).map((_, index) => (
                   <TableRow key={index}>
                     <TableCell><Skeleton className="h-6 w-[200px]" /></TableCell>
