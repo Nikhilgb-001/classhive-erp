@@ -18,13 +18,41 @@ const Teachers = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const { data: teachers, isLoading } = useQuery({
-    queryKey: ['teachers'],
+  // First, fetch the school ID
+  const { data: schoolData } = useQuery({
+    queryKey: ['school'],
     queryFn: async () => {
-      console.log('Fetching teachers');
+      console.log('Fetching school data');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      const { data, error } = await supabase
+        .from('schools')
+        .select('id')
+        .eq('admin_email', user.email)
+        .single();
+
+      if (error) {
+        console.error('Error fetching school:', error);
+        throw error;
+      }
+
+      console.log('School data fetched:', data);
+      return data;
+    },
+  });
+
+  // Then fetch teachers for that school
+  const { data: teachers, isLoading } = useQuery({
+    queryKey: ['teachers', schoolData?.id],
+    queryFn: async () => {
+      if (!schoolData?.id) return [];
+      
+      console.log('Fetching teachers for school:', schoolData.id);
       const { data, error } = await supabase
         .from('teachers')
         .select('*')
+        .eq('school_id', schoolData.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -40,6 +68,7 @@ const Teachers = () => {
       console.log('Teachers fetched:', data);
       return data;
     },
+    enabled: !!schoolData?.id,
   });
 
   const handleEdit = (teacherId: string) => {
