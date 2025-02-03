@@ -19,7 +19,7 @@ const Teachers = () => {
   const { toast } = useToast();
 
   // First, fetch the school ID
-  const { data: schoolData } = useQuery({
+  const { data: schoolData, isError: isSchoolError } = useQuery({
     queryKey: ['school'],
     queryFn: async () => {
       console.log('Fetching school data');
@@ -30,11 +30,16 @@ const Teachers = () => {
         .from('schools')
         .select('id')
         .eq('admin_email', user.email)
-        .single();
+        .maybeSingle();  // Changed from single() to maybeSingle()
 
       if (error) {
         console.error('Error fetching school:', error);
         throw error;
+      }
+
+      if (!data) {
+        console.log('No school found for this admin');
+        throw new Error('No school found for this admin');
       }
 
       console.log('School data fetched:', data);
@@ -79,6 +84,18 @@ const Teachers = () => {
       description: "Edit functionality will be available soon",
     });
   };
+
+  if (isSchoolError) {
+    return (
+      <AppLayout>
+        <div className="max-w-[1400px] mx-auto space-y-6">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
+            <p>No school found for your account. Please make sure you are logged in with the correct school admin account.</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
