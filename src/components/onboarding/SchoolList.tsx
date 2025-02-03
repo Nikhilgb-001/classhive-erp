@@ -6,24 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil } from "lucide-react";
 import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
 import { useState } from "react";
-
-interface School {
-  id: string;
-  school_name: string;
-  admin_name: string;
-  status: string;
-  created_at: string;
-  school_code: string;
-  school_address: string;
-  admin_email: string;
-  admin_phone: string;
-  billing_contact_name: string;
-  billing_phone: string;
-  billing_email: string;
-  founder_name: string;
-  founder_phone: string;
-  logo_url?: string;
-}
+import { School, SchoolFormData } from "@/types/school";
 
 interface SchoolListProps {
   schools: School[] | undefined;
@@ -32,7 +15,7 @@ interface SchoolListProps {
 }
 
 export const SchoolList = ({ schools, isLoading, error }: SchoolListProps) => {
-  const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState<SchoolFormData | null>(null);
 
   if (error) {
     return (
@@ -44,6 +27,21 @@ export const SchoolList = ({ schools, isLoading, error }: SchoolListProps) => {
       </div>
     );
   }
+
+  const mapSchoolToFormData = (school: School): SchoolFormData => ({
+    schoolName: school.school_name,
+    schoolCode: school.school_code,
+    schoolAddress: school.school_address,
+    adminName: school.admin_name,
+    adminEmail: school.admin_email,
+    adminPhone: school.admin_phone,
+    billingContactName: school.billing_contact_name,
+    billingPhone: school.billing_phone,
+    billingEmail: school.billing_email,
+    founderName: school.founder_name,
+    founderPhone: school.founder_phone,
+    logoUrl: school.logo_url,
+  });
 
   return (
     <div className="bg-white rounded-md shadow">
@@ -94,23 +92,7 @@ export const SchoolList = ({ schools, isLoading, error }: SchoolListProps) => {
                         variant="outline" 
                         size="sm" 
                         className="flex items-center gap-2 bg-white text-gray-700 hover:bg-gray-100"
-                        onClick={() => {
-                          const formData = {
-                            schoolName: school.school_name,
-                            schoolCode: school.school_code,
-                            schoolAddress: school.school_address,
-                            adminName: school.admin_name,
-                            adminEmail: school.admin_email,
-                            adminPhone: school.admin_phone,
-                            billingContactName: school.billing_contact_name,
-                            billingPhone: school.billing_phone,
-                            billingEmail: school.billing_email,
-                            founderName: school.founder_name,
-                            founderPhone: school.founder_phone,
-                            logoUrl: school.logo_url,
-                          };
-                          setSelectedSchool(formData);
-                        }}
+                        onClick={() => setSelectedSchool(mapSchoolToFormData(school))}
                       >
                         <Pencil className="h-4 w-4" />
                         Edit

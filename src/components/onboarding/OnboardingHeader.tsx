@@ -2,13 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Plus, Download, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { School } from "@/types/school";
 
 interface OnboardingHeaderProps {
   isSuperAdmin: boolean;
   hasSchools: boolean;
+  schools?: School[];
 }
 
-export const OnboardingHeader = ({ isSuperAdmin, hasSchools }: OnboardingHeaderProps) => {
+export const OnboardingHeader = ({ isSuperAdmin, hasSchools, schools = [] }: OnboardingHeaderProps) => {
   const navigate = useNavigate();
 
   const handleExportCSV = () => {

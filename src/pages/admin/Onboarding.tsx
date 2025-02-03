@@ -15,7 +15,8 @@ const AdminOnboarding = () => {
       <div className="max-w-[1400px] mx-auto space-y-6 bg-[#F1F1F1] min-h-screen p-6">
         <OnboardingHeader 
           isSuperAdmin={isSuperAdmin} 
-          hasSchools={Boolean(schools?.length)} 
+          hasSchools={Boolean(schools?.length)}
+          schools={schools}
         />
         <SchoolList 
           schools={schools} 
