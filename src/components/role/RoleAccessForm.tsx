@@ -87,13 +87,22 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
           description: `Updated role for ${formData.name}`,
         });
       } else {
-        // Create new user and role
+        // Create new user with email signup
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
+          options: {
+            data: {
+              name: formData.name,
+              phone: formData.phone,
+            }
+          }
         });
 
-        if (authError) throw authError;
+        if (authError) {
+          console.error('Auth error details:', authError);
+          throw authError;
+        }
 
         if (!authData.user?.id) {
           throw new Error('No user ID returned from auth signup');
@@ -143,7 +152,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
       console.error('Error managing user:', error);
       toast({
         title: "Error",
-        description: "Failed to manage user. Please try again.",
+        description: error.message || "Failed to manage user. Please try again.",
         variant: "destructive",
       });
     } finally {
