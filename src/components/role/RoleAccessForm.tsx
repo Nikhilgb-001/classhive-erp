@@ -1,21 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
-import { RoleSelect } from "./form/RoleSelect";
 import { UserDetailsFields } from "./form/UserDetailsFields";
-import { SchoolSelect } from "./form/SchoolSelect";
 
-type AppRole = Database["public"]["Enums"]["app_role"];
-
-interface RoleAccessFormData {
-  role: AppRole;
+interface UserFormData {
   name: string;
   email: string;
-  password: string;
   phone: string;
-  schoolId?: string;
 }
 
 interface RoleAccessFormProps {
@@ -26,27 +18,11 @@ interface RoleAccessFormProps {
 export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<RoleAccessFormData>({
-    role: 'student',
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    schoolId: '',
+  const [formData, setFormData] = useState<UserFormData>({
+    name: initialData?.user_details?.name || '',
+    email: initialData?.email || '',
+    phone: initialData?.user_details?.phone || '',
   });
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        role: initialData.role as AppRole,
-        name: initialData.user_details?.name || '',
-        email: initialData.email || '',
-        password: '',
-        phone: initialData.user_details?.phone || '',
-        schoolId: initialData.schoolDetails?.id || '',
-      });
-    }
-  }, [initialData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,16 +36,6 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
 
     try {
       if (initialData) {
-        // Update existing role
-        const { error: updateError } = await supabase
-          .from('user_roles')
-          .update({
-            role: formData.role,
-          })
-          .eq('id', initialData.id);
-
-        if (updateError) throw updateError;
-
         // Update user details
         const { error: userDetailsError } = await supabase
           .from('user_details')
@@ -77,72 +43,35 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
             user_id: initialData.user_id,
             name: formData.name,
             phone: formData.phone,
-            school_id: formData.schoolId || null,
           });
 
         if (userDetailsError) throw userDetailsError;
 
         toast({
-          title: "Role Updated Successfully",
-          description: `Updated role for ${formData.name}`,
+          title: "User Updated Successfully",
+          description: `Updated details for ${formData.name}`,
         });
       } else {
-        // Create new user with email signup
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            data: {
-              name: formData.name,
-              phone: formData.phone,
-            }
-          }
-        });
-
-        if (authError) {
-          console.error('Auth error details:', authError);
-          throw authError;
-        }
-
-        if (!authData.user?.id) {
-          throw new Error('No user ID returned from auth signup');
-        }
-
-        // Insert user role
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert([{
-            user_id: authData.user.id,
-            role: formData.role,
-          }]);
-
-        if (roleError) throw roleError;
-
         // Insert user details
         const { error: detailsError } = await supabase
           .from('user_details')
           .insert([{
-            user_id: authData.user.id,
             name: formData.name,
             phone: formData.phone,
-            school_id: formData.schoolId || null,
           }]);
 
         if (detailsError) throw detailsError;
 
         toast({
           title: "User Added Successfully",
-          description: `Added new ${formData.role} user: ${formData.name}`,
+          description: `Added new user: ${formData.name}`,
         });
 
         // Reset form
         setFormData({
-          role: 'student',
           name: '',
           email: '',
-          password: '',
           phone: '',
-          schoolId: '',
         });
       }
 
@@ -163,25 +92,12 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
       <div className="space-y-4">
-        <RoleSelect 
-          value={formData.role} 
-          onChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
-        />
-
         <UserDetailsFields
-          role={formData.role}
           name={formData.name}
           email={formData.email}
-          password={formData.password}
           phone={formData.phone}
           isEditMode={!!initialData}
           onChange={handleInputChange}
-        />
-
-        <SchoolSelect
-          role={formData.role}
-          value={formData.schoolId || ''}
-          onChange={(value) => setFormData(prev => ({ ...prev, schoolId: value }))}
         />
       </div>
 
