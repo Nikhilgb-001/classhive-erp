@@ -89,43 +89,45 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
 
         if (updateError) throw updateError;
 
-        // Update user metadata
-        const { error: userError } = await supabase.auth.admin.updateUserById(
-          initialData.user_id,
-          {
-            user_metadata: {
-              name: formData.name,
-              phone: formData.phone,
-              school_id: formData.schoolId,
-            }
-          }
-        );
+        // Update user details
+        const { error: userDetailsError } = await supabase
+          .from('user_details')
+          .upsert({
+            user_id: initialData.user_id,
+            name: formData.name,
+            phone: formData.phone,
+            school_id: formData.schoolId,
+          });
 
-        if (userError) throw userError;
+        if (userDetailsError) throw userDetailsError;
 
         toast({
           title: "Role Updated Successfully",
           description: `Updated role for ${formData.name}`,
         });
       } else {
-        // Create new role
-        console.log('Submitting user data:', formData);
-        
+        // Create new user and role
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
-          options: {
-            data: {
-              name: formData.name,
-              phone: formData.phone,
-              school_id: formData.schoolId,
-            }
-          }
         });
 
         if (authError) throw authError;
 
         if (authData.user) {
+          // Insert user details
+          const { error: detailsError } = await supabase
+            .from('user_details')
+            .insert([{
+              user_id: authData.user.id,
+              name: formData.name,
+              phone: formData.phone,
+              school_id: formData.schoolId,
+            }]);
+
+          if (detailsError) throw detailsError;
+
+          // Insert user role
           const { error: roleError } = await supabase
             .from('user_roles')
             .insert([{

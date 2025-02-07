@@ -49,36 +49,54 @@ const RoleAccess = () => {
           id,
           role,
           user_id,
-          created_at
+          created_at,
+          user_details:user_details(
+            name,
+            phone,
+            school_id
+          )
         `)
         .order('created_at', { ascending: false });
       
       if (rolesError) throw rolesError;
 
-      // Fetch user details from auth.users metadata
-      const userDetails = await Promise.all(
-        userRoles.map(async (role) => {
-          const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(role.user_id);
-          if (userError) throw userError;
+      // Fetch user emails from auth.users
+      const { data: authUsers, error: authError } = await supabase
+        .from('auth_users_view')
+        .select('id, email')
+        .in('id', userRoles.map(role => role.user_id));
 
-          let schoolDetails = null;
-          if (['school_admin', 'teacher', 'student'].includes(role.role)) {
+      if (authError) throw authError;
+
+      // Fetch school details for relevant roles
+      const schoolDetails = await Promise.all(
+        userRoles
+          .filter(role => ['school_admin', 'teacher', 'student'].includes(role.role))
+          .map(async (role) => {
+            if (!role.user_details?.school_id) return null;
+            
             const { data: school } = await supabase
               .from('schools')
               .select('*')
-              .eq('admin_email', user?.email)
+              .eq('id', role.user_details.school_id)
               .single();
-            schoolDetails = school;
-          }
-
-          return {
-            ...role,
-            user_details: user?.user_metadata,
-            email: user?.email,
-            schoolDetails
-          };
-        })
+            
+            return { userId: role.user_id, school };
+          })
       );
+
+      // Combine all the data
+      const userDetails = userRoles.map(role => {
+        const authUser = authUsers.find(user => user.id === role.user_id);
+        const schoolDetail = schoolDetails.find(s => s?.userId === role.user_id);
+        
+        return {
+          ...role,
+          email: authUser?.email,
+          user_details: role.user_details || {},
+          schoolDetails: schoolDetail?.school
+        };
+      });
 
       console.log('Fetched role permissions with details:', userDetails);
       return userDetails;
