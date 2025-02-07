@@ -17,11 +17,11 @@ type UserRole = {
   role: Database["public"]["Enums"]["app_role"];
   user_id: string;
   created_at: string;
-  user_details: {
-    name?: string;
-    phone?: string;
-    school_id?: string;
-  };
+  user_details?: {
+    name?: string | null;
+    phone?: string | null;
+    school_id?: string | null;
+  } | null;
   email?: string;
   schoolDetails?: {
     school_name: string;
