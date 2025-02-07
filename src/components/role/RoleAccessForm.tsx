@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -11,69 +11,104 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface RoleAccessFormData {
   role: string;
-  feature: string;
-  accessLevel: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  schoolId?: string;
 }
 
-const roles = ['school_admin', 'teacher', 'student'];
-const features = [
-  'schools',
-  'licenses',
-  'users',
-  'teachers',
-  'students',
-  'classes',
-  'attendance',
-  'assignments',
-  'grades',
-];
-const accessLevels = ['no_access', 'read', 'write', 'full_access'];
+const roles = ['super_admin', 'school_admin', 'teacher', 'student'];
 
 export const RoleAccessForm = () => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<RoleAccessFormData>({
     role: '',
-    feature: '',
-    accessLevel: '',
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    schoolId: '',
   });
+
+  // Fetch schools for dropdown
+  const { data: schools } = useQuery({
+    queryKey: ['schools'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('schools')
+        .select('id, school_name, school_code')
+        .order('school_name');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      console.log('Submitting role permission:', formData);
+      console.log('Submitting user data:', formData);
       
-      const { error } = await supabase
-        .from('role_permissions')
-        .insert([{
-          role: formData.role,
-          feature: formData.feature,
-          access_level: formData.accessLevel,
-        }]);
+      // First create the user in auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+            phone: formData.phone,
+            school_id: formData.schoolId,
+          }
+        }
+      });
 
-      if (error) {
-        console.error('Error inserting role permission:', error);
-        throw error;
+      if (authError) throw authError;
+
+      // Then add the role
+      if (authData.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert([{
+            user_id: authData.user.id,
+            role: formData.role as any, // Using type from database
+          }]);
+
+        if (roleError) throw roleError;
       }
 
       toast({
-        title: "Role Permission Added Successfully",
-        description: `Added ${formData.accessLevel} access for ${formData.role} on ${formData.feature}`,
+        title: "User Added Successfully",
+        description: `Added new ${formData.role} user: ${formData.name}`,
       });
 
-      queryClient.invalidateQueries({ queryKey: ['role-permissions'] });
+      // Reset form
+      setFormData({
+        role: '',
+        name: '',
+        email: '',
+        password: '',
+        phone: '',
+        schoolId: '',
+      });
 
     } catch (error) {
-      console.error('Error adding role permission:', error);
+      console.error('Error adding user:', error);
       toast({
         title: "Error",
-        description: "Failed to add role permission. Please try again.",
+        description: "Failed to add user. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -104,42 +139,80 @@ export const RoleAccessForm = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="feature">Feature</Label>
-          <Select
-            value={formData.feature}
-            onValueChange={(value) => setFormData(prev => ({ ...prev, feature: value }))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a feature" />
-            </SelectTrigger>
-            <SelectContent>
-              {features.map((feature) => (
-                <SelectItem key={feature} value={feature} className="capitalize">
-                  {feature.replace('_', ' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
+        {(formData.role === 'super_admin' || formData.role === 'school_admin') && (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+                minLength={6}
+              />
+            </div>
+          </>
+        )}
+
         <div className="space-y-2">
-          <Label htmlFor="accessLevel">Access Level</Label>
-          <Select
-            value={formData.accessLevel}
-            onValueChange={(value) => setFormData(prev => ({ ...prev, accessLevel: value }))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select access level" />
-            </SelectTrigger>
-            <SelectContent>
-              {accessLevels.map((level) => (
-                <SelectItem key={level} value={level} className="capitalize">
-                  {level.replace('_', ' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label htmlFor="phone">Phone Number</Label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={handleInputChange}
+            required
+          />
         </div>
+
+        {(formData.role === 'school_admin' || formData.role === 'teacher' || formData.role === 'student') && (
+          <div className="space-y-2">
+            <Label htmlFor="schoolId">School</Label>
+            <Select
+              value={formData.schoolId}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, schoolId: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a school" />
+              </SelectTrigger>
+              <SelectContent>
+                {schools?.map((school) => (
+                  <SelectItem 
+                    key={school.id} 
+                    value={school.id}
+                  >
+                    {`${school.school_name} (${school.school_code})`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       <Button 
@@ -147,7 +220,7 @@ export const RoleAccessForm = () => {
         className="w-full bg-[#1A1F2C] text-white hover:bg-[#2A2F3C]" 
         disabled={isLoading}
       >
-        {isLoading ? "Adding..." : "Add Role Permission"}
+        {isLoading ? "Adding..." : "Add User"}
       </Button>
     </form>
   );
