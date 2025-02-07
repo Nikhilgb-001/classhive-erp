@@ -108,7 +108,6 @@ const RoleAccess = () => {
         return {
           ...role,
           email: authUser?.email,
-          user_details: role.user_details || {},
           schoolDetails: schoolDetail?.school
         };
       });
