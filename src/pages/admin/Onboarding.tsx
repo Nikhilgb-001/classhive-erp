@@ -8,18 +8,43 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const AdminOnboarding = () => {
   const navigate = useNavigate();
   const [selectedSchool, setSelectedSchool] = useState(null);
+  const [session, setSession] = useState(null);
+
+  // Add session check
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        toast.error("Please login to continue");
+        navigate('/login');
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const { data: schools, isLoading, error } = useQuery({
     queryKey: ['schools'],
     queryFn: async () => {
       console.log('Fetching schools...');
+      if (!session) {
+        console.log('No session found, skipping fetch');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('schools')
         .select('*')
@@ -32,7 +57,7 @@ const AdminOnboarding = () => {
       console.log('Fetched schools:', data);
       return data;
     },
-    // Add retry and stale time configurations
+    enabled: !!session, // Only run query if session exists
     retry: 3,
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   });
