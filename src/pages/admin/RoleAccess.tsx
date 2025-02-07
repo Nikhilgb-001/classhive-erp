@@ -92,19 +92,19 @@ const RoleAccess = () => {
             <p>Loading role permissions...</p>
           ) : rolePermissions && rolePermissions.length > 0 ? (
             rolePermissions.map((permission) => (
-              <Card key={permission.id} className="bg-navy-900 text-white hover:shadow-lg transition-shadow duration-200">
+              <Card key={permission.id} className="bg-white border border-gray-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-xl capitalize">{permission.role}</CardTitle>
+                  <CardTitle className="text-xl text-gray-900 capitalize">{permission.role}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-300">User ID</p>
-                      <p>{permission.user_id}</p>
+                      <p className="text-sm font-medium text-gray-500">User ID</p>
+                      <p className="text-gray-900">{permission.user_id}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-300">Created At</p>
-                      <p>{new Date(permission.created_at).toLocaleDateString()}</p>
+                      <p className="text-sm font-medium text-gray-500">Created At</p>
+                      <p className="text-gray-900">{new Date(permission.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </CardContent>
