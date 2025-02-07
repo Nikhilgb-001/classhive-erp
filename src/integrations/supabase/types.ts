@@ -79,6 +79,33 @@ export type Database = {
           },
         ]
       }
+      role_permissions: {
+        Row: {
+          access_level: Database["public"]["Enums"]["feature_access"]
+          created_at: string
+          feature: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+        }
+        Insert: {
+          access_level: Database["public"]["Enums"]["feature_access"]
+          created_at?: string
+          feature: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Update: {
+          access_level?: Database["public"]["Enums"]["feature_access"]
+          created_at?: string
+          feature?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       schools: {
         Row: {
           admin_email: string
@@ -231,6 +258,7 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "school_admin" | "teacher" | "student"
+      feature_access: "no_access" | "read" | "write" | "full_access"
     }
     CompositeTypes: {
       [_ in never]: never
