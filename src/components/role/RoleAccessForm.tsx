@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Database } from "@/integrations/supabase/types";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
 
 interface RoleAccessFormData {
-  role: string;
+  role: AppRole;
   name: string;
   email: string;
   password: string;
@@ -27,13 +30,13 @@ interface RoleAccessFormProps {
   onSuccess?: () => void;
 }
 
-const roles = ['super_admin', 'school_admin', 'teacher', 'student'];
+const roles: AppRole[] = ['super_admin', 'school_admin', 'teacher', 'student'];
 
 export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<RoleAccessFormData>({
-    role: '',
+    role: 'student',
     name: '',
     email: '',
     password: '',
@@ -44,7 +47,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        role: initialData.role,
+        role: initialData.role as AppRole,
         name: initialData.user_details?.name || '',
         email: initialData.email || '',
         password: '',
@@ -127,7 +130,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
           .from('user_roles')
           .insert([{
             user_id: authData.user.id,
-            role: formData.role as any,
+            role: formData.role,
           }]);
 
         if (roleError) throw roleError;
@@ -153,7 +156,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
 
         // Reset form
         setFormData({
-          role: '',
+          role: 'student',
           name: '',
           email: '',
           password: '',

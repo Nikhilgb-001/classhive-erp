@@ -10,11 +10,30 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { RoleAccessForm } from "@/components/role/RoleAccessForm";
 import { EditRoleDialog } from "@/components/role/EditRoleDialog";
+import { Database } from "@/integrations/supabase/types";
+
+type UserRole = {
+  id: string;
+  role: Database["public"]["Enums"]["app_role"];
+  user_id: string;
+  created_at: string;
+  user_details: {
+    name?: string;
+    phone?: string;
+    school_id?: string;
+  };
+  email?: string;
+  schoolDetails?: {
+    school_name: string;
+    school_code: string;
+    school_address: string;
+  } | null;
+};
 
 const RoleAccess = () => {
   const navigate = useNavigate();
-  const [session, setSession] = useState(null);
-  const [editingRole, setEditingRole] = useState<any>(null);
+  const [session, setSession] = useState<any>(null);
+  const [editingRole, setEditingRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
