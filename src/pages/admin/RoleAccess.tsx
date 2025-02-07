@@ -12,9 +12,11 @@ import { RoleAccessForm } from "@/components/role/RoleAccessForm";
 import { EditRoleDialog } from "@/components/role/EditRoleDialog";
 import { Database } from "@/integrations/supabase/types";
 
+type AppRole = Database["public"]["Enums"]["app_role"];
+
 type UserRole = {
   id: string;
-  role: Database["public"]["Enums"]["app_role"];
+  role: AppRole;
   user_id: string;
   created_at: string;
   user_details?: {
@@ -106,7 +108,7 @@ const RoleAccess = () => {
 
       // Combine all the data
       const userDetails = userRoles.map(role => {
-        const authUser = authUsers.find(user => user.id === role.user_id);
+        const authUser = authUsers?.find(user => user.id === role.user_id);
         const schoolDetail = schoolDetails.find(s => s?.userId === role.user_id);
         
         return {
@@ -118,7 +120,7 @@ const RoleAccess = () => {
       });
 
       console.log('Fetched role permissions with details:', userDetails);
-      return userDetails;
+      return userDetails as UserRole[];
     },
     enabled: !!session,
     retry: 3,
@@ -209,7 +211,7 @@ const RoleAccess = () => {
                 <DialogHeader>
                   <DialogTitle>Add New Role Permission</DialogTitle>
                 </DialogHeader>
-                <RoleAccessForm />
+                <RoleAccessForm onSuccess={() => refetch()} />
               </DialogContent>
             </Dialog>
           </div>

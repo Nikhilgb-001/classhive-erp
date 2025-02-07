@@ -79,7 +79,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log('Starting form submission...');
+    console.log('Starting form submission...', formData);
 
     try {
       if (initialData) {
@@ -186,7 +186,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
           <Label htmlFor="role">Role</Label>
           <Select
             value={formData.role}
-            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+            onValueChange={(value: AppRole) => setFormData(prev => ({ ...prev, role: value }))}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a role" />
