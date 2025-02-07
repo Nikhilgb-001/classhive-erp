@@ -265,6 +265,13 @@ export type Database = {
             referencedRelation: "auth_users_view"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_details_user_role_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_roles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       user_roles: {
@@ -290,7 +297,7 @@ export type Database = {
           {
             foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "auth_users_view"
             referencedColumns: ["id"]
           },

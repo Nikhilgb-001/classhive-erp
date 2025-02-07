@@ -76,6 +76,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log('Starting form submission...');
 
     try {
       if (initialData) {
@@ -96,7 +97,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
             user_id: initialData.user_id,
             name: formData.name,
             phone: formData.phone,
-            school_id: formData.schoolId,
+            school_id: formData.schoolId || null,
           });
 
         if (userDetailsError) throw userDetailsError;
@@ -107,6 +108,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
         });
       } else {
         // Create new user and role
+        console.log('Creating new user...');
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -114,29 +116,35 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
 
         if (authError) throw authError;
 
-        if (authData.user) {
-          // Insert user details
-          const { error: detailsError } = await supabase
-            .from('user_details')
-            .insert([{
-              user_id: authData.user.id,
-              name: formData.name,
-              phone: formData.phone,
-              school_id: formData.schoolId,
-            }]);
-
-          if (detailsError) throw detailsError;
-
-          // Insert user role
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .insert([{
-              user_id: authData.user.id,
-              role: formData.role as any,
-            }]);
-
-          if (roleError) throw roleError;
+        if (!authData.user?.id) {
+          throw new Error('No user ID returned from auth signup');
         }
+
+        console.log('User created, inserting role...', authData.user.id);
+        
+        // Insert user role first
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert([{
+            user_id: authData.user.id,
+            role: formData.role as any,
+          }]);
+
+        if (roleError) throw roleError;
+
+        console.log('Role inserted, creating user details...');
+        
+        // Then insert user details
+        const { error: detailsError } = await supabase
+          .from('user_details')
+          .insert([{
+            user_id: authData.user.id,
+            name: formData.name,
+            phone: formData.phone,
+            school_id: formData.schoolId || null,
+          }]);
+
+        if (detailsError) throw detailsError;
 
         toast({
           title: "User Added Successfully",
