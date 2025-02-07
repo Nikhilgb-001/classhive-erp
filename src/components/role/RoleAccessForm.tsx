@@ -2,17 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Database } from "@/integrations/supabase/types";
+import { RoleSelect } from "./form/RoleSelect";
+import { UserDetailsFields } from "./form/UserDetailsFields";
+import { SchoolSelect } from "./form/SchoolSelect";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -29,8 +22,6 @@ interface RoleAccessFormProps {
   initialData?: any;
   onSuccess?: () => void;
 }
-
-const roles: AppRole[] = ['super_admin', 'school_admin', 'teacher', 'student'];
 
 export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) => {
   const { toast } = useToast();
@@ -56,20 +47,6 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
       });
     }
   }, [initialData]);
-
-  // Fetch schools for dropdown
-  const { data: schools } = useQuery({
-    queryKey: ['schools'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('schools')
-        .select('id, school_name, school_code')
-        .order('school_name');
-      
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -111,7 +88,6 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
         });
       } else {
         // Create new user and role
-        console.log('Creating new user...');
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -123,9 +99,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
           throw new Error('No user ID returned from auth signup');
         }
 
-        console.log('User created, inserting role...', authData.user.id);
-        
-        // Insert user role first
+        // Insert user role
         const { error: roleError } = await supabase
           .from('user_roles')
           .insert([{
@@ -135,9 +109,7 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
 
         if (roleError) throw roleError;
 
-        console.log('Role inserted, creating user details...');
-        
-        // Then insert user details
+        // Insert user details
         const { error: detailsError } = await supabase
           .from('user_details')
           .insert([{
@@ -182,100 +154,26 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="role">Role</Label>
-          <Select
-            value={formData.role}
-            onValueChange={(value: AppRole) => setFormData(prev => ({ ...prev, role: value }))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a role" />
-            </SelectTrigger>
-            <SelectContent>
-              {roles.map((role) => (
-                <SelectItem key={role} value={role} className="capitalize">
-                  {role.replace('_', ' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <RoleSelect 
+          value={formData.role} 
+          onChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <UserDetailsFields
+          role={formData.role}
+          name={formData.name}
+          email={formData.email}
+          password={formData.password}
+          phone={formData.phone}
+          isEditMode={!!initialData}
+          onChange={handleInputChange}
+        />
 
-        {!initialData && (formData.role === 'super_admin' || formData.role === 'school_admin') && (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                minLength={6}
-              />
-            </div>
-          </>
-        )}
-
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input
-            id="phone"
-            name="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-
-        {(formData.role === 'school_admin' || formData.role === 'teacher' || formData.role === 'student') && (
-          <div className="space-y-2">
-            <Label htmlFor="schoolId">School</Label>
-            <Select
-              value={formData.schoolId}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, schoolId: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a school" />
-              </SelectTrigger>
-              <SelectContent>
-                {schools?.map((school) => (
-                  <SelectItem 
-                    key={school.id} 
-                    value={school.id}
-                  >
-                    {`${school.school_name} (${school.school_code})`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        <SchoolSelect
+          role={formData.role}
+          value={formData.schoolId || ''}
+          onChange={(value) => setFormData(prev => ({ ...prev, schoolId: value }))}
+        />
       </div>
 
       <Button 

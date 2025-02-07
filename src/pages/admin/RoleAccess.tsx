@@ -1,15 +1,15 @@
+import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download, Edit, Plus, Trash2 } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { RoleAccessForm } from "@/components/role/RoleAccessForm";
 import { EditRoleDialog } from "@/components/role/EditRoleDialog";
+import { RoleCard } from "@/components/role/RoleCard";
 import { Database } from "@/integrations/supabase/types";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
@@ -59,10 +59,7 @@ const RoleAccess = () => {
     queryKey: ['role-permissions'],
     queryFn: async () => {
       console.log('Fetching role permissions...');
-      if (!session) {
-        console.log('No session found, skipping fetch');
-        return [];
-      }
+      if (!session) return [];
 
       const { data: userRoles, error: rolesError } = await supabase
         .from('user_roles')
@@ -81,7 +78,6 @@ const RoleAccess = () => {
       
       if (rolesError) throw rolesError;
 
-      // Fetch user emails from auth.users
       const { data: authUsers, error: authError } = await supabase
         .from('auth_users_view')
         .select('id, email')
@@ -89,7 +85,6 @@ const RoleAccess = () => {
 
       if (authError) throw authError;
 
-      // Fetch school details for relevant roles
       const schoolDetails = await Promise.all(
         userRoles
           .filter(role => ['school_admin', 'teacher', 'student'].includes(role.role))
@@ -106,7 +101,6 @@ const RoleAccess = () => {
           })
       );
 
-      // Combine all the data
       const userDetails = userRoles.map(role => {
         const authUser = authUsers?.find(user => user.id === role.user_id);
         const schoolDetail = schoolDetails.find(s => s?.userId === role.user_id);
@@ -119,7 +113,6 @@ const RoleAccess = () => {
         };
       });
 
-      console.log('Fetched role permissions with details:', userDetails);
       return userDetails as UserRole[];
     },
     enabled: !!session,
@@ -222,65 +215,12 @@ const RoleAccess = () => {
             <p>Loading role permissions...</p>
           ) : rolePermissions && rolePermissions.length > 0 ? (
             rolePermissions.map((permission) => (
-              <Card key={permission.id} className="bg-white border border-gray-200 shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl text-gray-900 capitalize">
-                    {permission.role}
-                  </CardTitle>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      onClick={() => setEditingRole(permission)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      onClick={() => handleDelete(permission.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">User ID</p>
-                      <p className="text-gray-900">{permission.user_id}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Name</p>
-                      <p className="text-gray-900">{permission.user_details?.name || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Email</p>
-                      <p className="text-gray-900">{permission.email || 'N/A'}</p>
-                    </div>
-                    {['school_admin', 'teacher', 'student'].includes(permission.role) && permission.schoolDetails && (
-                      <>
-                        <div>
-                          <p className="text-sm font-medium text-gray-500">School</p>
-                          <p className="text-gray-900">{permission.schoolDetails.school_name}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-500">School Code</p>
-                          <p className="text-gray-900">{permission.schoolDetails.school_code}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-500">School Address</p>
-                          <p className="text-gray-900">{permission.schoolDetails.school_address}</p>
-                        </div>
-                      </>
-                    )}
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Created At</p>
-                      <p className="text-gray-900">{new Date(permission.created_at).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <RoleCard
+                key={permission.id}
+                {...permission}
+                onEdit={() => setEditingRole(permission)}
+                onDelete={() => handleDelete(permission.id)}
+              />
             ))
           ) : (
             <p>No role permissions configured yet.</p>
