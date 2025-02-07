@@ -9,10 +9,12 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { RoleAccessForm } from "@/components/role/RoleAccessForm";
+import { EditRoleDialog } from "@/components/role/EditRoleDialog";
 
 const RoleAccess = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
+  const [editingRole, setEditingRole] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -106,7 +108,18 @@ const RoleAccess = () => {
   const exportToCSV = () => {
     if (!rolePermissions?.length) return;
 
-    const headers = ['ID', 'Role', 'User ID', 'Name', 'Email', 'School', 'Created At'];
+    const headers = [
+      'ID', 
+      'Role', 
+      'User ID', 
+      'Name', 
+      'Email', 
+      'School Name',
+      'School Code', 
+      'School Address',
+      'Created At'
+    ];
+
     const csvData = rolePermissions.map(permission => [
       permission.id,
       permission.role,
@@ -114,6 +127,8 @@ const RoleAccess = () => {
       permission.user_details?.name || 'N/A',
       permission.email || 'N/A',
       permission.schoolDetails?.school_name || 'N/A',
+      permission.schoolDetails?.school_code || 'N/A',
+      permission.schoolDetails?.school_address || 'N/A',
       new Date(permission.created_at).toLocaleDateString()
     ]);
 
@@ -174,7 +189,11 @@ const RoleAccess = () => {
                     {permission.role}
                   </CardTitle>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="icon">
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => setEditingRole(permission)}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button 
@@ -201,10 +220,20 @@ const RoleAccess = () => {
                       <p className="text-gray-900">{permission.email || 'N/A'}</p>
                     </div>
                     {['school_admin', 'teacher', 'student'].includes(permission.role) && permission.schoolDetails && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">School</p>
-                        <p className="text-gray-900">{permission.schoolDetails.school_name}</p>
-                      </div>
+                      <>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">School</p>
+                          <p className="text-gray-900">{permission.schoolDetails.school_name}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">School Code</p>
+                          <p className="text-gray-900">{permission.schoolDetails.school_code}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">School Address</p>
+                          <p className="text-gray-900">{permission.schoolDetails.school_address}</p>
+                        </div>
+                      </>
                     )}
                     <div>
                       <p className="text-sm font-medium text-gray-500">Created At</p>
@@ -218,6 +247,12 @@ const RoleAccess = () => {
             <p>No role permissions configured yet.</p>
           )}
         </div>
+
+        <EditRoleDialog 
+          isOpen={!!editingRole}
+          onClose={() => setEditingRole(null)}
+          roleData={editingRole}
+        />
       </div>
     </AppLayout>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,9 +22,14 @@ interface RoleAccessFormData {
   schoolId?: string;
 }
 
+interface RoleAccessFormProps {
+  initialData?: any;
+  onSuccess?: () => void;
+}
+
 const roles = ['super_admin', 'school_admin', 'teacher', 'student'];
 
-export const RoleAccessForm = () => {
+export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<RoleAccessFormData>({
@@ -35,6 +40,19 @@ export const RoleAccessForm = () => {
     phone: '',
     schoolId: '',
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        role: initialData.role,
+        name: initialData.user_details?.name || '',
+        email: initialData.email || '',
+        password: '',
+        phone: initialData.user_details?.phone || '',
+        schoolId: initialData.schoolDetails?.id || '',
+      });
+    }
+  }, [initialData]);
 
   // Fetch schools for dropdown
   const { data: schools } = useQuery({
@@ -60,55 +78,87 @@ export const RoleAccessForm = () => {
     setIsLoading(true);
 
     try {
-      console.log('Submitting user data:', formData);
-      
-      // First create the user in auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            name: formData.name,
-            phone: formData.phone,
-            school_id: formData.schoolId,
-          }
-        }
-      });
-
-      if (authError) throw authError;
-
-      // Then add the role
-      if (authData.user) {
-        const { error: roleError } = await supabase
+      if (initialData) {
+        // Update existing role
+        const { error: updateError } = await supabase
           .from('user_roles')
-          .insert([{
-            user_id: authData.user.id,
-            role: formData.role as any, // Using type from database
-          }]);
+          .update({
+            role: formData.role,
+          })
+          .eq('id', initialData.id);
 
-        if (roleError) throw roleError;
+        if (updateError) throw updateError;
+
+        // Update user metadata
+        const { error: userError } = await supabase.auth.admin.updateUserById(
+          initialData.user_id,
+          {
+            user_metadata: {
+              name: formData.name,
+              phone: formData.phone,
+              school_id: formData.schoolId,
+            }
+          }
+        );
+
+        if (userError) throw userError;
+
+        toast({
+          title: "Role Updated Successfully",
+          description: `Updated role for ${formData.name}`,
+        });
+      } else {
+        // Create new role
+        console.log('Submitting user data:', formData);
+        
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              name: formData.name,
+              phone: formData.phone,
+              school_id: formData.schoolId,
+            }
+          }
+        });
+
+        if (authError) throw authError;
+
+        if (authData.user) {
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .insert([{
+              user_id: authData.user.id,
+              role: formData.role as any,
+            }]);
+
+          if (roleError) throw roleError;
+        }
+
+        toast({
+          title: "User Added Successfully",
+          description: `Added new ${formData.role} user: ${formData.name}`,
+        });
+
+        // Reset form
+        setFormData({
+          role: '',
+          name: '',
+          email: '',
+          password: '',
+          phone: '',
+          schoolId: '',
+        });
       }
 
-      toast({
-        title: "User Added Successfully",
-        description: `Added new ${formData.role} user: ${formData.name}`,
-      });
-
-      // Reset form
-      setFormData({
-        role: '',
-        name: '',
-        email: '',
-        password: '',
-        phone: '',
-        schoolId: '',
-      });
+      onSuccess?.();
 
     } catch (error) {
-      console.error('Error adding user:', error);
+      console.error('Error managing user:', error);
       toast({
         title: "Error",
-        description: "Failed to add user. Please try again.",
+        description: "Failed to manage user. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -149,7 +199,7 @@ export const RoleAccessForm = () => {
           />
         </div>
 
-        {(formData.role === 'super_admin' || formData.role === 'school_admin') && (
+        {!initialData && (formData.role === 'super_admin' || formData.role === 'school_admin') && (
           <>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -220,7 +270,7 @@ export const RoleAccessForm = () => {
         className="w-full bg-[#1A1F2C] text-white hover:bg-[#2A2F3C]" 
         disabled={isLoading}
       >
-        {isLoading ? "Adding..." : "Add User"}
+        {isLoading ? (initialData ? "Updating..." : "Adding...") : (initialData ? "Update User" : "Add User")}
       </Button>
     </form>
   );
