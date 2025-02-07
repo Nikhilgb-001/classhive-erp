@@ -42,8 +42,13 @@ const RoleAccess = () => {
       }
 
       const { data, error } = await supabase
-        .from('role_permissions')
-        .select('*')
+        .from('user_roles')
+        .select(`
+          id,
+          role,
+          user_id,
+          created_at
+        `)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -87,19 +92,19 @@ const RoleAccess = () => {
             <p>Loading role permissions...</p>
           ) : rolePermissions && rolePermissions.length > 0 ? (
             rolePermissions.map((permission) => (
-              <Card key={permission.id} className="hover:shadow-lg transition-shadow duration-200">
+              <Card key={permission.id} className="bg-navy-900 text-white hover:shadow-lg transition-shadow duration-200">
                 <CardHeader>
                   <CardTitle className="text-xl capitalize">{permission.role}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Feature</p>
-                      <p className="capitalize">{permission.feature}</p>
+                      <p className="text-sm font-medium text-gray-300">User ID</p>
+                      <p>{permission.user_id}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Access Level</p>
-                      <p className="capitalize">{permission.access_level}</p>
+                      <p className="text-sm font-medium text-gray-300">Created At</p>
+                      <p>{new Date(permission.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </CardContent>
