@@ -8,8 +8,8 @@ type AppRole = Database["public"]["Enums"]["app_role"];
 interface RoleCardProps {
   id: string;
   role: AppRole;
-  userId: string;
-  userDetails: {
+  user_id: string;
+  user_details?: {
     name?: string | null;
     phone?: string | null;
     school_id?: string | null;
@@ -20,18 +20,19 @@ interface RoleCardProps {
     school_code: string;
     school_address: string;
   } | null;
-  createdAt: string;
+  created_at: string;
   onEdit: () => void;
   onDelete: () => void;
 }
 
 export const RoleCard = ({
+  id,
   role,
-  userId,
-  userDetails,
+  user_id,
+  user_details,
   email,
   schoolDetails,
-  createdAt,
+  created_at,
   onEdit,
   onDelete,
 }: RoleCardProps) => {
@@ -62,11 +63,11 @@ export const RoleCard = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <p className="text-sm font-medium text-gray-500">User ID</p>
-            <p className="text-gray-900">{userId}</p>
+            <p className="text-gray-900">{user_id}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Name</p>
-            <p className="text-gray-900">{userDetails?.name || 'N/A'}</p>
+            <p className="text-gray-900">{user_details?.name || 'N/A'}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Email</p>
@@ -90,7 +91,7 @@ export const RoleCard = ({
           )}
           <div>
             <p className="text-sm font-medium text-gray-500">Created At</p>
-            <p className="text-gray-900">{new Date(createdAt).toLocaleDateString()}</p>
+            <p className="text-gray-900">{new Date(created_at).toLocaleDateString()}</p>
           </div>
         </div>
       </CardContent>
