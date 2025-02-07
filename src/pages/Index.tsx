@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, GraduationCap, BookOpen, BarChart3, TrendingUp, TrendingDown } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const stats = [
   {
@@ -62,6 +66,53 @@ const recentActivities = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        toast.error("Please login to continue");
+        navigate('/login');
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const { data: recentActivities, isLoading } = useQuery({
+    queryKey: ['recent-activities'],
+    queryFn: async () => {
+      if (!session) return [];
+
+      const { data: schools, error } = await supabase
+        .from('schools')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) {
+        console.error('Error fetching recent activities:', error);
+        throw error;
+      }
+
+      return schools.map(school => ({
+        type: "School Onboarding",
+        description: `${school.school_name} was onboarded`,
+        time: format(new Date(school.created_at), 'MM/dd/yyyy HH:mm'),
+        user: school.admin_name
+      }));
+    },
+    enabled: !!session,
+    retry: 3,
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+  });
 
   return (
     <AppLayout>
@@ -122,14 +173,28 @@ const Index = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentActivities.map((activity, index) => (
-                  <TableRow key={index} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">{activity.type}</TableCell>
-                    <TableCell>{activity.description}</TableCell>
-                    <TableCell>{activity.user}</TableCell>
-                    <TableCell>{activity.time}</TableCell>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">
+                      Loading recent activities...
+                    </TableCell>
                   </TableRow>
-                ))}
+                ) : recentActivities && recentActivities.length > 0 ? (
+                  recentActivities.map((activity, index) => (
+                    <TableRow key={index} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">{activity.type}</TableCell>
+                      <TableCell>{activity.description}</TableCell>
+                      <TableCell>{activity.user}</TableCell>
+                      <TableCell>{activity.time}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">
+                      No recent activities
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
