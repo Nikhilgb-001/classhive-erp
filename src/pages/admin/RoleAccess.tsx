@@ -33,47 +33,41 @@ const RoleAccess = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const { data: users, isLoading, refetch } = useQuery({
-    queryKey: ['users'],
+  const { data: usersData, isLoading, refetch } = useQuery({
+    queryKey: ['users-with-roles'],
     queryFn: async () => {
-      console.log('Fetching users...');
       if (!session) return [];
 
+      // First fetch user details
       const { data: userDetails, error: userDetailsError } = await supabase
         .from('user_details')
-        .select(`
-          id,
-          name,
-          phone,
-          created_at,
-          user_id,
-          school_id
-        `)
-        .order('created_at', { ascending: false });
-      
+        .select('id, name, phone, created_at, user_id, school_id');
+
       if (userDetailsError) {
         console.error('Error fetching user details:', userDetailsError);
         throw userDetailsError;
       }
 
-      // Fetch roles for each user
-      const userRolesPromises = userDetails.map(async (user) => {
-        const { data: roleData, error: roleError } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.user_id)
-          .single();
+      // Then fetch roles separately
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
 
-        if (roleError) {
-          console.error('Error fetching user role:', roleError);
-          return { ...user, role: null };
-        }
+      if (rolesError) {
+        console.error('Error fetching user roles:', rolesError);
+        throw rolesError;
+      }
 
-        return { ...user, role: roleData?.role };
+      // Combine the data
+      const combinedData = userDetails.map(user => {
+        const userRole = userRoles.find(role => role.user_id === user.user_id);
+        return {
+          ...user,
+          role: userRole?.role || null
+        };
       });
 
-      const usersWithRoles = await Promise.all(userRolesPromises);
-      return usersWithRoles;
+      return combinedData;
     },
     enabled: !!session,
   });
@@ -105,7 +99,7 @@ const RoleAccess = () => {
         <div className="bg-white rounded-lg shadow">
           {isLoading ? (
             <p className="p-4">Loading users...</p>
-          ) : users && users.length > 0 ? (
+          ) : usersData && usersData.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -116,7 +110,7 @@ const RoleAccess = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
+                {usersData.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name || 'N/A'}</TableCell>
                     <TableCell>{user.phone || 'N/A'}</TableCell>
