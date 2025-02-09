@@ -1,3 +1,4 @@
+
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Database } from "@/integrations/supabase/types";
@@ -13,7 +14,7 @@ interface SchoolSelectProps {
 }
 
 export const SchoolSelect = ({ role, value, onChange }: SchoolSelectProps) => {
-  const { data: schools } = useQuery({
+  const { data: schools, isLoading } = useQuery({
     queryKey: ['schools'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -28,6 +29,10 @@ export const SchoolSelect = ({ role, value, onChange }: SchoolSelectProps) => {
 
   if (!['school_admin', 'teacher', 'student'].includes(role)) {
     return null;
+  }
+
+  if (isLoading) {
+    return <div>Loading schools...</div>;
   }
 
   return (

@@ -2,21 +2,33 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import type { Database } from "@/integrations/supabase/types";
+import { RoleSelect } from "./RoleSelect";
+import { SchoolSelect } from "./SchoolSelect";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
 
 interface UserDetailsFieldsProps {
   name: string;
   email: string;
   phone: string;
+  role: AppRole;
+  schoolId: string;
   isEditMode: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRoleChange: (value: AppRole) => void;
+  onSchoolChange: (value: string) => void;
 }
 
 export const UserDetailsFields = ({ 
   name, 
   email, 
-  phone, 
+  phone,
+  role,
+  schoolId,
   isEditMode, 
-  onChange 
+  onChange,
+  onRoleChange,
+  onSchoolChange
 }: UserDetailsFieldsProps) => {
   return (
     <>
@@ -55,6 +67,17 @@ export const UserDetailsFields = ({
           required
         />
       </div>
+
+      <RoleSelect 
+        value={role} 
+        onChange={onRoleChange}
+      />
+
+      <SchoolSelect 
+        role={role}
+        value={schoolId}
+        onChange={onSchoolChange}
+      />
     </>
   );
 };

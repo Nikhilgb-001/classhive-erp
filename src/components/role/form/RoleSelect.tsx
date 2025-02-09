@@ -1,3 +1,4 @@
+
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Database } from "@/integrations/supabase/types";
@@ -9,7 +10,7 @@ interface RoleSelectProps {
   onChange: (value: AppRole) => void;
 }
 
-const roles: AppRole[] = ['super_admin', 'school_admin', 'teacher', 'student'];
+const roles: AppRole[] = ['school_admin', 'teacher', 'student'];
 
 export const RoleSelect = ({ value, onChange }: RoleSelectProps) => {
   return (
