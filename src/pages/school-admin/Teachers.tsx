@@ -37,9 +37,18 @@ const Teachers = () => {
     queryKey: ['teachers'],
     queryFn: async () => {
       console.log('Fetching teachers data');
+      // Get the school_id from localStorage
+      const schoolId = localStorage.getItem('schoolId');
+      
+      if (!schoolId) {
+        console.error('No school ID found');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('teachers')
         .select('*')
+        .eq('school_id', schoolId)
         .order('created_at', { ascending: false });
 
       if (error) {
