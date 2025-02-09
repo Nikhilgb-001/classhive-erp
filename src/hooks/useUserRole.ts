@@ -1,8 +1,17 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+
+type AppRole = Database["public"]["Enums"]["app_role"];
+
+interface UserRoleData {
+  role: AppRole | null;
+  schoolId: string | null;
+}
 
 export const useUserRole = () => {
-  const [role, setRole] = useState<string | null>(null);
+  const [roleData, setRoleData] = useState<UserRoleData>({ role: null, schoolId: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,7 +22,7 @@ export const useUserRole = () => {
         if (session?.user?.id) {
           const { data, error } = await supabase
             .from('user_roles')
-            .select('role')
+            .select('role, school_id')
             .eq('user_id', session.user.id)
             .single();
 
@@ -22,7 +31,28 @@ export const useUserRole = () => {
             return;
           }
 
-          setRole(data?.role || null);
+          if (data) {
+            setRoleData({
+              role: data.role,
+              schoolId: data.school_id
+            });
+
+            // Store schoolId in localStorage if it exists
+            if (data.school_id) {
+              localStorage.setItem('schoolId', data.school_id);
+            }
+          }
+        } else {
+          // Check for teacher/student role in localStorage
+          const userRole = localStorage.getItem('userRole');
+          const schoolId = localStorage.getItem('schoolId');
+          
+          if (userRole && schoolId) {
+            setRoleData({
+              role: userRole as AppRole,
+              schoolId
+            });
+          }
         }
       } catch (error) {
         console.error('Error in useUserRole:', error);
@@ -32,7 +62,20 @@ export const useUserRole = () => {
     };
 
     fetchUserRole();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setRoleData({ role: null, schoolId: null });
+        localStorage.removeItem('schoolId');
+        localStorage.removeItem('userRole');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  return { role, loading };
+  return { ...roleData, loading };
 };
