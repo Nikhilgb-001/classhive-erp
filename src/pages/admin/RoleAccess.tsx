@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -38,18 +39,41 @@ const RoleAccess = () => {
       console.log('Fetching users...');
       if (!session) return [];
 
-      const { data, error } = await supabase
+      const { data: userDetails, error: userDetailsError } = await supabase
         .from('user_details')
         .select(`
           id,
           name,
           phone,
-          created_at
+          created_at,
+          user_id,
+          school_id
         `)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      return data;
+      if (userDetailsError) {
+        console.error('Error fetching user details:', userDetailsError);
+        throw userDetailsError;
+      }
+
+      // Fetch roles for each user
+      const userRolesPromises = userDetails.map(async (user) => {
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.user_id)
+          .single();
+
+        if (roleError) {
+          console.error('Error fetching user role:', roleError);
+          return { ...user, role: null };
+        }
+
+        return { ...user, role: roleData?.role };
+      });
+
+      const usersWithRoles = await Promise.all(userRolesPromises);
+      return usersWithRoles;
     },
     enabled: !!session,
   });
@@ -87,6 +111,7 @@ const RoleAccess = () => {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Phone</TableHead>
+                  <TableHead>Role</TableHead>
                   <TableHead>Created At</TableHead>
                 </TableRow>
               </TableHeader>
@@ -95,6 +120,7 @@ const RoleAccess = () => {
                   <TableRow key={user.id}>
                     <TableCell>{user.name || 'N/A'}</TableCell>
                     <TableCell>{user.phone || 'N/A'}</TableCell>
+                    <TableCell className="capitalize">{user.role?.replace('_', ' ') || 'N/A'}</TableCell>
                     <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
                   </TableRow>
                 ))}
