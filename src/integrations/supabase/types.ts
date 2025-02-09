@@ -163,6 +163,59 @@ export type Database = {
         }
         Relationships: []
       }
+      students: {
+        Row: {
+          admission_number: string | null
+          class: string | null
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          school_id: string
+          section: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          admission_number?: string | null
+          class?: string | null
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          phone?: string | null
+          school_id: string
+          section?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admission_number?: string | null
+          class?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          school_id?: string
+          section?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teachers: {
         Row: {
           class: string | null
@@ -213,6 +266,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_school_teachers"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "teachers_school_id_fkey"
             columns: ["school_id"]
