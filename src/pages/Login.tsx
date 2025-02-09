@@ -75,13 +75,17 @@ export default function Login() {
         .from('teachers')
         .select('id, school_id')
         .eq('phone', phone)
-        .single();
+        .maybeSingle();
+
+      if (teacherError) throw teacherError;
 
       const { data: studentData, error: studentError } = await supabase
         .from('students')
         .select('id, school_id')
         .eq('phone', phone)
-        .single();
+        .maybeSingle();
+
+      if (studentError) throw studentError;
 
       if (teacherData) {
         // Teacher login logic
@@ -102,7 +106,11 @@ export default function Login() {
         });
         navigate("/student");
       } else {
-        throw new Error("Phone number not found in our records");
+        toast({
+          title: "Login failed",
+          description: "Phone number not found in our records",
+          variant: "destructive",
+        });
       }
     } catch (error: any) {
       console.error("Login error details:", error);
