@@ -10,10 +10,12 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { RoleAccessForm } from "@/components/role/RoleAccessForm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const RoleAccess = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
+  const { role: currentUserRole, schoolId: currentUserSchoolId } = useUserRole();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -38,38 +40,39 @@ const RoleAccess = () => {
     queryFn: async () => {
       if (!session) return [];
 
-      // First fetch user details
-      const { data: userDetails, error: userDetailsError } = await supabase
+      let query = supabase
         .from('user_details')
-        .select('id, name, phone, created_at, user_id, school_id');
+        .select(`
+          id,
+          name,
+          phone,
+          created_at,
+          user_id,
+          school_id,
+          user_roles!inner (
+            role,
+            school_id
+          )
+        `);
+
+      // If the current user is a school admin, only fetch users from their school
+      if (currentUserRole === 'school_admin' && currentUserSchoolId) {
+        query = query.eq('school_id', currentUserSchoolId);
+      }
+
+      const { data: userDetails, error: userDetailsError } = await query;
 
       if (userDetailsError) {
         console.error('Error fetching user details:', userDetailsError);
         throw userDetailsError;
       }
 
-      // Then fetch roles separately
-      const { data: userRoles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      if (rolesError) {
-        console.error('Error fetching user roles:', rolesError);
-        throw rolesError;
-      }
-
-      // Combine the data
-      const combinedData = userDetails.map(user => {
-        const userRole = userRoles.find(role => role.user_id === user.user_id);
-        return {
-          ...user,
-          role: userRole?.role || null
-        };
-      });
-
-      return combinedData;
+      return userDetails.map(user => ({
+        ...user,
+        role: user.user_roles?.role || null
+      }));
     },
-    enabled: !!session,
+    enabled: !!session && !!currentUserRole,
   });
 
   return (
@@ -80,20 +83,22 @@ const RoleAccess = () => {
             <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
             <p className="text-gray-500 mt-2">Manage user details</p>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Add New User
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Add New User</DialogTitle>
-              </DialogHeader>
-              <RoleAccessForm onSuccess={() => refetch()} />
-            </DialogContent>
-          </Dialog>
+          {(currentUserRole === 'super_admin' || currentUserRole === 'school_admin') && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New User
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Add New User</DialogTitle>
+                </DialogHeader>
+                <RoleAccessForm onSuccess={() => refetch()} />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow">
