@@ -1,24 +1,19 @@
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Database } from "@/integrations/supabase/types";
-
-type AppRole = Database["public"]["Enums"]["app_role"];
+import type { Database } from "@/integrations/supabase/types";
 
 interface UserDetailsFieldsProps {
-  role: AppRole;
   name: string;
   email: string;
-  password: string;
   phone: string;
   isEditMode: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const UserDetailsFields = ({ 
-  role, 
   name, 
   email, 
-  password, 
   phone, 
   isEditMode, 
   onChange 
@@ -36,33 +31,17 @@ export const UserDetailsFields = ({
         />
       </div>
 
-      {!isEditMode && (role === 'super_admin' || role === 'school_admin') && (
-        <>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={email}
-              onChange={onChange}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={onChange}
-              required
-              minLength={6}
-            />
-          </div>
-        </>
+      {!isEditMode && (
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={onChange}
+          />
+        </div>
       )}
 
       <div className="space-y-2">

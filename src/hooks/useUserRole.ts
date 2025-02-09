@@ -22,7 +22,7 @@ export const useUserRole = () => {
         if (session?.user?.id) {
           const { data, error } = await supabase
             .from('user_roles')
-            .select('role, school_id')
+            .select('*')
             .eq('user_id', session.user.id)
             .single();
 
@@ -34,7 +34,7 @@ export const useUserRole = () => {
           if (data) {
             setRoleData({
               role: data.role,
-              schoolId: data.school_id
+              schoolId: data.school_id || null
             });
 
             // Store schoolId in localStorage if it exists

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -39,11 +40,11 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
         // Update user details
         const { error: userDetailsError } = await supabase
           .from('user_details')
-          .upsert({
-            user_id: initialData.user_id,
+          .update({
             name: formData.name,
             phone: formData.phone,
-          });
+          })
+          .eq('id', initialData.user_id);
 
         if (userDetailsError) throw userDetailsError;
 
@@ -52,13 +53,18 @@ export const RoleAccessForm = ({ initialData, onSuccess }: RoleAccessFormProps) 
           description: `Updated details for ${formData.name}`,
         });
       } else {
+        // Get current user
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) throw new Error('No authenticated user found');
+
         // Insert user details
         const { error: detailsError } = await supabase
           .from('user_details')
-          .insert([{
+          .insert({
             name: formData.name,
             phone: formData.phone,
-          }]);
+            user_id: session.user.id
+          });
 
         if (detailsError) throw detailsError;
 

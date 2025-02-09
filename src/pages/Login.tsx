@@ -28,12 +28,10 @@ export default function Login() {
 
       if (error) throw error;
 
-      console.log("Sign in successful:", data);
-
       // Fetch user role
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
-        .select('role, school_id')
+        .select('*')
         .eq('user_id', data.user.id)
         .single();
 
