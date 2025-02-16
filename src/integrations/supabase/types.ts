@@ -154,6 +154,7 @@ export type Database = {
           founder_phone: string
           id: string
           logo_url: string | null
+          schema_name: string | null
           school_address: string
           school_app_id: string
           school_code: string
@@ -172,6 +173,7 @@ export type Database = {
           founder_phone: string
           id?: string
           logo_url?: string | null
+          schema_name?: string | null
           school_address: string
           school_app_id: string
           school_code: string
@@ -190,6 +192,7 @@ export type Database = {
           founder_phone?: string
           id?: string
           logo_url?: string | null
+          schema_name?: string | null
           school_address?: string
           school_app_id?: string
           school_code?: string

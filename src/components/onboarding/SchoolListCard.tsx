@@ -11,6 +11,7 @@ interface School {
   admin_phone: string;
   status: string;
   created_at: string;
+  schema_name?: string;
 }
 
 interface SchoolListCardProps {
@@ -41,6 +42,12 @@ export const SchoolListCard = ({ school }: SchoolListCardProps) => {
             <p className="text-sm font-medium text-gray-500">Contact</p>
             <p>{school.admin_phone}</p>
           </div>
+          {school.schema_name && (
+            <div>
+              <p className="text-sm font-medium text-gray-500">Schema Name</p>
+              <p>{school.schema_name}</p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
