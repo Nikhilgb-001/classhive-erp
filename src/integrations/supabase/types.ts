@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          created_at: string
+          details: Json
+          event_type: string
+          id: string
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details: Json
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "auth_users_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       class_configurations: {
         Row: {
           classes: string[]
@@ -340,6 +375,11 @@ export type Database = {
           id: string
           role: Database["public"]["Enums"]["app_role"]
           school_id: string | null
+          two_factor_enabled: boolean | null
+          two_factor_method:
+            | Database["public"]["Enums"]["two_factor_method"]
+            | null
+          two_factor_secret: string | null
           user_id: string
         }
         Insert: {
@@ -347,6 +387,11 @@ export type Database = {
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           school_id?: string | null
+          two_factor_enabled?: boolean | null
+          two_factor_method?:
+            | Database["public"]["Enums"]["two_factor_method"]
+            | null
+          two_factor_secret?: string | null
           user_id: string
         }
         Update: {
@@ -354,6 +399,11 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           school_id?: string | null
+          two_factor_enabled?: boolean | null
+          two_factor_method?:
+            | Database["public"]["Enums"]["two_factor_method"]
+            | null
+          two_factor_secret?: string | null
           user_id?: string
         }
         Relationships: [
@@ -402,10 +452,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_audit_event: {
+        Args: {
+          p_event_type: string
+          p_details: Json
+          p_ip_address?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "super_admin" | "school_admin" | "teacher" | "student"
       feature_access: "no_access" | "read" | "write" | "full_access"
+      two_factor_method: "sms" | "email" | "authenticator"
     }
     CompositeTypes: {
       [_ in never]: never
