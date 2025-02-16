@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -101,6 +102,9 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
       if (logoFile) {
         logoUrl = await uploadSchoolLogo(schoolAppId, logoFile);
       }
+
+      // Generate schema name from school app id
+      const schemaName = `school_${schoolAppId.toLowerCase().replace(/-/g, '_')}`;
       
       const schoolData = {
         school_app_id: schoolAppId,
@@ -116,20 +120,52 @@ export const SchoolOnboardingForm = ({ initialData }: SchoolOnboardingFormProps)
         founder_name: formData.founderName,
         founder_phone: formData.founderPhone,
         logo_url: logoUrl,
+        schema_name: schemaName,
+        settings: {
+          theme: {
+            primary_color: "#1A1F2C",
+            secondary_color: "#2A2F3C",
+            text_color: "#000000"
+          }
+        }
       };
 
-      const { error } = await supabase
+      const { data: schoolResponse, error } = await supabase
         .from('schools')
-        .insert([schoolData]);
+        .insert([schoolData])
+        .select()
+        .single();
 
       if (error) {
         console.error('Error inserting/updating school:', error);
         throw error;
       }
 
+      // Create school admin user role
+      if (schoolResponse) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert([{
+            user_id: session.user.id,
+            role: 'school_admin',
+            school_id: schoolResponse.id
+          }]);
+
+        if (roleError) throw roleError;
+      }
+
       toast({
         title: initialData ? "School Updated Successfully" : "School Onboarded Successfully",
         description: `School App ID: ${schoolAppId}`,
+      });
+
+      // Log the audit event
+      await supabase.rpc('log_audit_event', {
+        p_event_type: initialData ? 'school_updated' : 'school_created',
+        p_details: {
+          school_app_id: schoolAppId,
+          school_name: formData.schoolName
+        }
       });
 
       queryClient.invalidateQueries({ queryKey: ['schools'] });

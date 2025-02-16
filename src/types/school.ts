@@ -1,3 +1,4 @@
+
 export interface SchoolFormData {
   schoolName: string;
   schoolCode: string;
@@ -11,4 +12,5 @@ export interface SchoolFormData {
   founderName: string;
   founderPhone: string;
   logoUrl?: string;
+  schemaName?: string;
 }
