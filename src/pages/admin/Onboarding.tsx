@@ -1,3 +1,4 @@
+
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -8,43 +9,18 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const AdminOnboarding = () => {
   const navigate = useNavigate();
   const [selectedSchool, setSelectedSchool] = useState(null);
-  const [session, setSession] = useState(null);
-
-  // Add session check
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (!session) {
-        toast.error("Please login to continue");
-        navigate('/login');
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
 
   const { data: schools, isLoading, error } = useQuery({
     queryKey: ['schools'],
     queryFn: async () => {
       console.log('Fetching schools...');
-      if (!session) {
-        console.log('No session found, skipping fetch');
-        return [];
-      }
-
       const { data, error } = await supabase
         .from('schools')
         .select('*')
@@ -57,9 +33,6 @@ const AdminOnboarding = () => {
       console.log('Fetched schools:', data);
       return data;
     },
-    enabled: !!session, // Only run query if session exists
-    retry: 3,
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   });
 
   const handleExportCSV = () => {
@@ -118,6 +91,16 @@ const AdminOnboarding = () => {
     return (
       <AppLayout>
         <div className="max-w-[1400px] mx-auto space-y-6 bg-[#F1F1F1] min-h-screen p-6">
+          <div className="flex items-center gap-4 mb-6">
+            <Button 
+              variant="ghost" 
+              className="p-0 hover:bg-transparent text-[#1A1F2C]"
+              onClick={() => navigate('/admin')}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-2xl font-semibold text-[#1A1F2C]">School Onboarding</h1>
+          </div>
           <div className="flex items-center justify-center h-[400px]">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900">Error Loading Schools</h3>
@@ -173,7 +156,6 @@ const AdminOnboarding = () => {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                // Show loading skeleton rows
                 Array.from({ length: 3 }).map((_, index) => (
                   <TableRow key={index}>
                     <TableCell><Skeleton className="h-6 w-[200px]" /></TableCell>
