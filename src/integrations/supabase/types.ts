@@ -455,6 +455,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_school_admin_for_school: {
+        Args: {
+          admin_id: string
+          school_id: string
+        }
+        Returns: boolean
+      }
+      is_super_admin: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
       log_audit_event: {
         Args: {
           p_event_type: string
