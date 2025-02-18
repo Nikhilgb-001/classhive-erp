@@ -24,6 +24,14 @@ interface School {
   logo_url?: string;
   status?: string;
   created_at: string;
+  schema_name?: string;
+  settings?: {
+    theme?: {
+      primary_color?: string;
+      secondary_color?: string;
+      text_color?: string;
+    };
+  };
 }
 
 interface SchoolTableProps {
@@ -46,6 +54,7 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
     founderName: school.founder_name,
     founderPhone: school.founder_phone,
     logoUrl: school.logo_url,
+    schemaName: school.schema_name,
   });
 
   return (
@@ -54,6 +63,7 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
         <TableHeader>
           <TableRow className="border-[#1A1F2C]/10">
             <TableHead className="text-[#1A1F2C]">SCHOOL NAME</TableHead>
+            <TableHead className="text-[#1A1F2C]">SCHEMA NAME</TableHead>
             <TableHead className="text-[#1A1F2C]">ADMIN NAME</TableHead>
             <TableHead className="text-[#1A1F2C]">STATUS</TableHead>
             <TableHead className="text-[#1A1F2C]">CREATED AT</TableHead>
@@ -66,6 +76,7 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
               <TableRow key={index}>
                 <TableCell><Skeleton className="h-6 w-[200px]" /></TableCell>
                 <TableCell><Skeleton className="h-6 w-[150px]" /></TableCell>
+                <TableCell><Skeleton className="h-6 w-[150px]" /></TableCell>
                 <TableCell><Skeleton className="h-6 w-[100px]" /></TableCell>
                 <TableCell><Skeleton className="h-6 w-[120px]" /></TableCell>
                 <TableCell><Skeleton className="h-6 w-[80px]" /></TableCell>
@@ -76,6 +87,9 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
               <TableRow key={school.id} className="border-[#1A1F2C]/10">
                 <TableCell className="text-[#1A1F2C] font-medium">
                   {school.school_name}
+                </TableCell>
+                <TableCell className="text-[#1A1F2C]">
+                  {school.schema_name || `school_${school.school_code.toLowerCase()}`}
                 </TableCell>
                 <TableCell className="text-[#1A1F2C]">{school.admin_name}</TableCell>
                 <TableCell>
@@ -115,7 +129,7 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-8 text-[#1A1F2C]">
+              <TableCell colSpan={6} className="text-center py-8 text-[#1A1F2C]">
                 No schools found
               </TableCell>
             </TableRow>

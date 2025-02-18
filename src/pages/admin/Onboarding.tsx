@@ -17,17 +17,39 @@ const AdminOnboarding = () => {
     queryKey: ['schools'],
     queryFn: async () => {
       console.log('Fetching schools...');
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('No user found');
+      }
+
+      // Check if user is super_admin
+      const { data: isAdmin } = await supabase.rpc('is_super_admin', {
+        user_id: user.id
+      });
+
+      if (!isAdmin) {
+        throw new Error('Unauthorized');
+      }
+
       const { data, error } = await supabase
         .from('schools')
-        .select('*')
+        .select('*, settings')
         .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching schools:', error);
         throw error;
       }
-      console.log('Fetched schools:', data);
-      return data;
+
+      // Transform data to include schema_name if not present
+      const transformedData = data.map(school => ({
+        ...school,
+        schema_name: school.schema_name || `school_${school.school_code.toLowerCase().replace(/-/g, '_')}`,
+      }));
+
+      console.log('Fetched schools:', transformedData);
+      return transformedData;
     },
   });
 
@@ -40,7 +62,7 @@ const AdminOnboarding = () => {
     const headers = [
       "School Name",
       "School Code",
-      "School App ID",
+      "Schema Name",
       "School Address",
       "Admin Name",
       "Admin Email",
@@ -57,7 +79,7 @@ const AdminOnboarding = () => {
     const csvData = schools.map(school => [
       school.school_name,
       school.school_code,
-      school.school_app_id,
+      school.schema_name,
       school.school_address,
       school.admin_name,
       school.admin_email,
