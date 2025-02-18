@@ -34,7 +34,7 @@ const AdminOnboarding = () => {
 
       const { data, error } = await supabase
         .from('schools')
-        .select('*, settings')
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -42,11 +42,25 @@ const AdminOnboarding = () => {
         throw error;
       }
 
+      if (!data) {
+        return [];
+      }
+
       // Transform data to include schema_name if not present
-      const transformedData = data.map(school => ({
-        ...school,
-        schema_name: school.schema_name || `school_${school.school_code.toLowerCase().replace(/-/g, '_')}`,
-      }));
+      const transformedData = data.map(school => {
+        const schemaName = school.schema_name || `school_${school.school_code.toLowerCase().replace(/-/g, '_')}`;
+        return {
+          ...school,
+          schema_name: schemaName,
+          settings: {
+            theme: {
+              primary_color: '#000000',
+              secondary_color: '#ffffff',
+              text_color: '#000000'
+            }
+          }
+        };
+      });
 
       console.log('Fetched schools:', transformedData);
       return transformedData;
