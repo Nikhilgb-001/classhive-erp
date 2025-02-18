@@ -6,6 +6,7 @@ import { SchoolOnboardingForm } from "@/components/SchoolOnboardingForm";
 import { Pencil } from "lucide-react";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SchoolFormData } from "@/types/school";
 
 interface School {
   id: string;
@@ -28,10 +29,25 @@ interface School {
 interface SchoolTableProps {
   schools: School[] | null;
   isLoading: boolean;
-  onSchoolSelect: (school: any) => void;
+  onSchoolSelect: (school: SchoolFormData) => void;
 }
 
 export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableProps) => {
+  const transformToFormData = (school: School): SchoolFormData => ({
+    schoolName: school.school_name,
+    schoolCode: school.school_code,
+    schoolAddress: school.school_address,
+    adminName: school.admin_name,
+    adminEmail: school.admin_email,
+    adminPhone: school.admin_phone,
+    billingContactName: school.billing_contact_name,
+    billingPhone: school.billing_phone,
+    billingEmail: school.billing_email,
+    founderName: school.founder_name,
+    founderPhone: school.founder_phone,
+    logoUrl: school.logo_url,
+  });
+
   return (
     <div className="bg-white rounded-md shadow">
       <Table>
@@ -81,23 +97,7 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
                         variant="outline" 
                         size="sm" 
                         className="flex items-center gap-2 bg-white text-gray-700 hover:bg-gray-100"
-                        onClick={() => {
-                          const formData = {
-                            schoolName: school.school_name,
-                            schoolCode: school.school_code,
-                            schoolAddress: school.school_address,
-                            adminName: school.admin_name,
-                            adminEmail: school.admin_email,
-                            adminPhone: school.admin_phone,
-                            billingContactName: school.billing_contact_name,
-                            billingPhone: school.billing_phone,
-                            billingEmail: school.billing_email,
-                            founderName: school.founder_name,
-                            founderPhone: school.founder_phone,
-                            logoUrl: school.logo_url,
-                          };
-                          onSchoolSelect(formData);
-                        }}
+                        onClick={() => onSchoolSelect(transformToFormData(school))}
                       >
                         <Pencil className="h-4 w-4" />
                         Edit
@@ -107,7 +107,7 @@ export const SchoolTable = ({ schools, isLoading, onSchoolSelect }: SchoolTableP
                       <DialogHeader>
                         <DialogTitle className="text-[#1A1F2C]">Edit School Details</DialogTitle>
                       </DialogHeader>
-                      <SchoolOnboardingForm initialData={school} />
+                      <SchoolOnboardingForm initialData={transformToFormData(school)} />
                     </DialogContent>
                   </Dialog>
                 </TableCell>
