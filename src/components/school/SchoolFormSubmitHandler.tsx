@@ -43,14 +43,15 @@ export const SchoolFormSubmitHandler = ({
     try {
       console.log('Attempting to insert/update school with session:', session);
       
+      // Generate school app id and schema name first
+      const schoolAppId = generateSchoolAppId();
+      const schemaName = `school_${schoolAppId.toLowerCase().replace(/-/g, '_')}`;
+      
+      // Then use schoolAppId for logo upload
       let logoUrl = formData.logoUrl;
       if (logoFile) {
         logoUrl = await uploadSchoolLogo(schoolAppId, logoFile);
       }
-
-      // Generate school app id and schema name
-      const schoolAppId = generateSchoolAppId();
-      const schemaName = `school_${schoolAppId.toLowerCase().replace(/-/g, '_')}`;
       
       const schoolData = {
         school_app_id: schoolAppId,
