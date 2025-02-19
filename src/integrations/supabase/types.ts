@@ -476,6 +476,12 @@ export type Database = {
         }
         Returns: string
       }
+      set_schema: {
+        Args: {
+          schema_name: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "super_admin" | "school_admin" | "teacher" | "student"
