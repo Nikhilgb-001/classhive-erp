@@ -1,4 +1,3 @@
-
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,19 +47,12 @@ const AdminOnboarding = () => {
 
       // Transform data to include schema_name if not present
       const transformedData = data.map(school => {
-        const schemaName = school.schema_name || `school_${school.school_code.toLowerCase().replace(/-/g, '_')}`;
+        if (!school) return null;
         return {
           ...school,
-          schema_name: schemaName,
-          settings: {
-            theme: {
-              primary_color: '#000000',
-              secondary_color: '#ffffff',
-              text_color: '#000000'
-            }
-          }
+          schema_name: school.schema_name || `school_${school.school_code.toLowerCase().replace(/-/g, '_')}`
         };
-      });
+      }).filter(Boolean);
 
       console.log('Fetched schools:', transformedData);
       return transformedData;

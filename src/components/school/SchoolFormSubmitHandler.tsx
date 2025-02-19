@@ -39,17 +39,17 @@ export const SchoolFormSubmitHandler = ({
     }
 
     setIsLoading(true);
-    const schoolAppId = generateSchoolAppId();
     
     try {
       console.log('Attempting to insert/update school with session:', session);
       
-      let logoUrl = null;
+      let logoUrl = formData.logoUrl;
       if (logoFile) {
         logoUrl = await uploadSchoolLogo(schoolAppId, logoFile);
       }
 
-      // Generate schema name from school app id
+      // Generate school app id and schema name
+      const schoolAppId = generateSchoolAppId();
       const schemaName = `school_${schoolAppId.toLowerCase().replace(/-/g, '_')}`;
       
       const schoolData = {
@@ -66,14 +66,7 @@ export const SchoolFormSubmitHandler = ({
         founder_name: formData.founderName,
         founder_phone: formData.founderPhone,
         logo_url: logoUrl,
-        schema_name: schemaName,
-        settings: {
-          theme: {
-            primary_color: "#1A1F2C",
-            secondary_color: "#2A2F3C",
-            text_color: "#000000"
-          }
-        }
+        schema_name: schemaName
       };
 
       const { data: schoolResponse, error } = await supabase
