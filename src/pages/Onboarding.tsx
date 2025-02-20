@@ -39,15 +39,42 @@ const Onboarding = () => {
         return [];
       }
 
-      const { data, error } = await supabase
+      // First check if user is super_admin
+      const { data: isSuperAdmin, error: superAdminError } = await supabase
+        .rpc('is_super_admin', { user_id: session.user.id });
+
+      if (superAdminError) {
+        console.error('Error checking super admin status:', superAdminError);
+        throw superAdminError;
+      }
+
+      let query = supabase
         .from('schools')
         .select('*')
         .order('created_at', { ascending: false });
+
+      // If not super admin, only fetch schools where user has a role
+      if (!isSuperAdmin) {
+        const { data: userRoles } = await supabase
+          .from('user_roles')
+          .select('school_id')
+          .eq('user_id', session.user.id);
+
+        if (userRoles && userRoles.length > 0) {
+          const schoolIds = userRoles.map(role => role.school_id);
+          query = query.in('id', schoolIds);
+        } else {
+          return [];
+        }
+      }
+
+      const { data, error } = await query;
       
       if (error) {
         console.error('Error fetching schools:', error);
         throw error;
       }
+
       console.log('Fetched schools:', data);
       return data;
     },

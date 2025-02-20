@@ -47,57 +47,57 @@ export const SchoolFormSubmitHandler = ({
       const schoolAppId = generateSchoolAppId();
       const schemaName = `school_${schoolAppId.toLowerCase().replace(/-/g, '_')}`;
       
-      // Then use schoolAppId for logo upload
+      // Upload logo if provided
       let logoUrl = formData.logoUrl;
       if (logoFile) {
         logoUrl = await uploadSchoolLogo(schoolAppId, logoFile);
       }
       
-      const schoolData = {
-        school_app_id: schoolAppId,
-        school_name: formData.schoolName,
-        school_code: formData.schoolCode,
-        school_address: formData.schoolAddress,
-        admin_name: formData.adminName,
-        admin_email: formData.adminEmail,
-        admin_phone: formData.adminPhone,
-        billing_contact_name: formData.billingContactName,
-        billing_phone: formData.billingPhone,
-        billing_email: formData.billingEmail,
-        founder_name: formData.founderName,
-        founder_phone: formData.founderPhone,
-        logo_url: logoUrl,
-        schema_name: schemaName
-      };
-
-      const { data: schoolResponse, error } = await supabase
+      // First, insert the school record
+      const { data: schoolData, error: schoolError } = await supabase
         .from('schools')
-        .insert([schoolData])
+        .insert([{
+          school_app_id: schoolAppId,
+          school_name: formData.schoolName,
+          school_code: formData.schoolCode,
+          school_address: formData.schoolAddress,
+          admin_name: formData.adminName,
+          admin_email: formData.adminEmail,
+          admin_phone: formData.adminPhone,
+          billing_contact_name: formData.billingContactName,
+          billing_phone: formData.billingPhone,
+          billing_email: formData.billingEmail,
+          founder_name: formData.founderName,
+          founder_phone: formData.founderPhone,
+          logo_url: logoUrl,
+          schema_name: schemaName,
+          status: 'pending'
+        }])
         .select()
         .single();
 
-      if (error) {
-        console.error('Error inserting/updating school:', error);
-        throw error;
+      if (schoolError) {
+        console.error('Error inserting school:', schoolError);
+        throw schoolError;
       }
 
-      // Create school admin user role
-      if (schoolResponse) {
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert([{
-            user_id: session.user.id,
-            role: 'school_admin',
-            school_id: schoolResponse.id
-          }]);
-
-        if (roleError) throw roleError;
+      if (!schoolData) {
+        throw new Error('No school data returned after insert');
       }
 
-      toast({
-        title: isUpdate ? "School Updated Successfully" : "School Onboarded Successfully",
-        description: `School App ID: ${schoolAppId}`,
-      });
+      // Then create the role assignment in a separate query
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert([{
+          user_id: session.user.id,
+          role: 'school_admin',
+          school_id: schoolData.id
+        }]);
+
+      if (roleError) {
+        console.error('Error creating role:', roleError);
+        throw roleError;
+      }
 
       // Log the audit event
       await supabase.rpc('log_audit_event', {
@@ -106,6 +106,11 @@ export const SchoolFormSubmitHandler = ({
           school_app_id: schoolAppId,
           school_name: formData.schoolName
         }
+      });
+
+      toast({
+        title: isUpdate ? "School Updated Successfully" : "School Created Successfully",
+        description: `School App ID: ${schoolAppId}`,
       });
 
       queryClient.invalidateQueries({ queryKey: ['schools'] });
@@ -130,7 +135,7 @@ export const SchoolFormSubmitHandler = ({
       disabled={isLoading}
       onClick={handleSubmit}
     >
-      {isLoading ? (isUpdate ? "Updating..." : "Onboarding...") : (isUpdate ? "Update School" : "Onboard School")}
+      {isLoading ? (isUpdate ? "Updating..." : "Creating...") : (isUpdate ? "Update School" : "Create School")}
     </Button>
   );
 };
