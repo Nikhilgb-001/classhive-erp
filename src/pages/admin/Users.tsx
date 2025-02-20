@@ -10,6 +10,17 @@ import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RoleAccessForm } from "@/components/role/RoleAccessForm";
 import { useUserRole } from "@/hooks/useUserRole";
+import type { Database } from "@/integrations/supabase/types";
+
+type UserDetails = Database["public"]["Tables"]["user_details"]["Row"] & {
+  user_roles: {
+    role: Database["public"]["Enums"]["app_role"];
+    school_id: string;
+  };
+  schools: {
+    school_name: string;
+  }[];
+};
 
 const AdminUsers = () => {
   const [session, setSession] = useState(null);
@@ -45,7 +56,7 @@ const AdminUsers = () => {
             role,
             school_id
           ),
-          schools:user_roles(
+          schools!user_roles (
             school_name
           )
         `);
@@ -62,7 +73,7 @@ const AdminUsers = () => {
         throw error;
       }
 
-      return data;
+      return data as UserDetails[];
     },
     enabled: !!session && !!currentUserRole,
   });
@@ -112,7 +123,7 @@ const AdminUsers = () => {
                 {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name || 'N/A'}</TableCell>
-                    <TableCell>{user.email || 'N/A'}</TableCell>
+                    <TableCell>{user.user_id || 'N/A'}</TableCell>
                     <TableCell className="capitalize">
                       {user.user_roles?.role?.replace('_', ' ') || 'N/A'}
                     </TableCell>
