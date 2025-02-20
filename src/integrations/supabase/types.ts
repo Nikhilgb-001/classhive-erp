@@ -11,25 +11,55 @@ export type Database = {
     Tables: {
       schools: {
         Row: {
+          admin_email: string | null
+          admin_name: string | null
+          admin_phone: string | null
+          billing_contact_name: string | null
+          billing_email: string | null
+          billing_phone: string | null
           created_at: string
+          founder_name: string | null
+          founder_phone: string | null
           id: string
           schema_name: string
+          school_address: string | null
+          school_code: string
           school_name: string
           status: string | null
           updated_at: string
         }
         Insert: {
+          admin_email?: string | null
+          admin_name?: string | null
+          admin_phone?: string | null
+          billing_contact_name?: string | null
+          billing_email?: string | null
+          billing_phone?: string | null
           created_at?: string
+          founder_name?: string | null
+          founder_phone?: string | null
           id?: string
           schema_name: string
+          school_address?: string | null
+          school_code: string
           school_name: string
           status?: string | null
           updated_at?: string
         }
         Update: {
+          admin_email?: string | null
+          admin_name?: string | null
+          admin_phone?: string | null
+          billing_contact_name?: string | null
+          billing_email?: string | null
+          billing_phone?: string | null
           created_at?: string
+          founder_name?: string | null
+          founder_phone?: string | null
           id?: string
           schema_name?: string
+          school_address?: string | null
+          school_code?: string
           school_name?: string
           status?: string | null
           updated_at?: string

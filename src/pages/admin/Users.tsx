@@ -20,7 +20,14 @@ type UserRole = {
   created_at: string;
   school?: {
     school_name: string;
+    school_code: string;
   };
+};
+
+type AuthUser = {
+  id: string;
+  email: string;
+  created_at: string;
 };
 
 const AdminUsers = () => {
@@ -54,7 +61,8 @@ const AdminUsers = () => {
         .select(`
           *,
           school:schools (
-            school_name
+            school_name,
+            school_code
           )
         `);
 
@@ -63,7 +71,7 @@ const AdminUsers = () => {
         query = query.eq('school_id', currentUserSchoolId);
       }
 
-      const { data, error } = await query;
+      const { data: userRoles, error } = await query;
 
       if (error) {
         console.error('Error fetching users:', error);
@@ -71,10 +79,18 @@ const AdminUsers = () => {
       }
 
       // Get user details from auth
-      const { data: authUsers } = await supabase.auth.admin.listUsers();
-      const userMap = new Map(authUsers?.users.map(user => [user.id, user]));
+      const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
+      
+      if (authError) {
+        console.error('Error fetching auth users:', authError);
+        throw authError;
+      }
 
-      return (data as UserRole[]).map(role => ({
+      const userMap = new Map(
+        authUsers.map((user: AuthUser) => [user.id, user])
+      );
+
+      return (userRoles as UserRole[]).map(role => ({
         ...role,
         userDetails: userMap.get(role.user_id)
       }));
@@ -118,6 +134,7 @@ const AdminUsers = () => {
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>School</TableHead>
+                  <TableHead>School Code</TableHead>
                   <TableHead>Created At</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -131,6 +148,9 @@ const AdminUsers = () => {
                     </TableCell>
                     <TableCell>
                       {userRole.school?.school_name || 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      {userRole.school?.school_code || 'N/A'}
                     </TableCell>
                     <TableCell>
                       {new Date(userRole.created_at).toLocaleDateString()}
