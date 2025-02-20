@@ -9,368 +9,32 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      audit_logs: {
-        Row: {
-          created_at: string
-          details: Json
-          event_type: string
-          id: string
-          ip_address: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          details: Json
-          event_type: string
-          id?: string
-          ip_address?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          details?: Json
-          event_type?: string
-          id?: string
-          ip_address?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "auth_users_view"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      class_configurations: {
-        Row: {
-          classes: string[]
-          created_at: string
-          id: string
-          school_id: string
-          sections: string[]
-          subjects: string[]
-          updated_at: string
-        }
-        Insert: {
-          classes?: string[]
-          created_at?: string
-          id?: string
-          school_id: string
-          sections?: string[]
-          subjects?: string[]
-          updated_at?: string
-        }
-        Update: {
-          classes?: string[]
-          created_at?: string
-          id?: string
-          school_id?: string
-          sections?: string[]
-          subjects?: string[]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "class_configurations_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      licenses: {
-        Row: {
-          created_at: string
-          expiry_date: string
-          id: string
-          school_id: string
-          status: string | null
-        }
-        Insert: {
-          created_at?: string
-          expiry_date: string
-          id?: string
-          school_id: string
-          status?: string | null
-        }
-        Update: {
-          created_at?: string
-          expiry_date?: string
-          id?: string
-          school_id?: string
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "licenses_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      role_permissions: {
-        Row: {
-          access_level: Database["public"]["Enums"]["feature_access"]
-          created_at: string
-          feature: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          updated_at: string
-        }
-        Insert: {
-          access_level: Database["public"]["Enums"]["feature_access"]
-          created_at?: string
-          feature: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-        }
-        Update: {
-          access_level?: Database["public"]["Enums"]["feature_access"]
-          created_at?: string
-          feature?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-        }
-        Relationships: []
-      }
       schools: {
         Row: {
-          admin_email: string
-          admin_name: string
-          admin_phone: string
-          billing_contact_name: string
-          billing_email: string
-          billing_phone: string
           created_at: string
-          founder_name: string
-          founder_phone: string
           id: string
-          logo_url: string | null
-          schema_name: string | null
-          school_address: string
-          school_app_id: string
-          school_code: string
+          schema_name: string
           school_name: string
           status: string | null
+          updated_at: string
         }
         Insert: {
-          admin_email: string
-          admin_name: string
-          admin_phone: string
-          billing_contact_name: string
-          billing_email: string
-          billing_phone: string
           created_at?: string
-          founder_name: string
-          founder_phone: string
           id?: string
-          logo_url?: string | null
-          schema_name?: string | null
-          school_address: string
-          school_app_id: string
-          school_code: string
+          schema_name: string
           school_name: string
           status?: string | null
+          updated_at?: string
         }
         Update: {
-          admin_email?: string
-          admin_name?: string
-          admin_phone?: string
-          billing_contact_name?: string
-          billing_email?: string
-          billing_phone?: string
           created_at?: string
-          founder_name?: string
-          founder_phone?: string
           id?: string
-          logo_url?: string | null
-          schema_name?: string | null
-          school_address?: string
-          school_app_id?: string
-          school_code?: string
+          schema_name?: string
           school_name?: string
           status?: string | null
+          updated_at?: string
         }
         Relationships: []
-      }
-      students: {
-        Row: {
-          admission_number: string | null
-          class: string | null
-          created_at: string
-          email: string | null
-          first_name: string
-          id: string
-          last_name: string
-          phone: string | null
-          school_id: string
-          section: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          admission_number?: string | null
-          class?: string | null
-          created_at?: string
-          email?: string | null
-          first_name: string
-          id?: string
-          last_name: string
-          phone?: string | null
-          school_id: string
-          section?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          admission_number?: string | null
-          class?: string | null
-          created_at?: string
-          email?: string | null
-          first_name?: string
-          id?: string
-          last_name?: string
-          phone?: string | null
-          school_id?: string
-          section?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "students_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      teachers: {
-        Row: {
-          class: string | null
-          created_at: string
-          email: string
-          first_name: string
-          id: string
-          is_primary_teacher: boolean | null
-          last_name: string
-          phone: string
-          primary_subject: string | null
-          qualification: string
-          school_id: string
-          section: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          class?: string | null
-          created_at?: string
-          email: string
-          first_name: string
-          id?: string
-          is_primary_teacher?: boolean | null
-          last_name: string
-          phone: string
-          primary_subject?: string | null
-          qualification: string
-          school_id: string
-          section?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          class?: string | null
-          created_at?: string
-          email?: string
-          first_name?: string
-          id?: string
-          is_primary_teacher?: boolean | null
-          last_name?: string
-          phone?: string
-          primary_subject?: string | null
-          qualification?: string
-          school_id?: string
-          section?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_school_teachers"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "teachers_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_details: {
-        Row: {
-          created_at: string
-          id: string
-          name: string | null
-          phone: string | null
-          school_id: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name?: string | null
-          phone?: string | null
-          school_id?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string | null
-          phone?: string | null
-          school_id?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_details_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_details_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "auth_users_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_details_user_role_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "user_roles"
-            referencedColumns: ["user_id"]
-          },
-        ]
       }
       user_roles: {
         Row: {
@@ -378,11 +42,6 @@ export type Database = {
           id: string
           role: Database["public"]["Enums"]["app_role"]
           school_id: string | null
-          two_factor_enabled: boolean | null
-          two_factor_method:
-            | Database["public"]["Enums"]["two_factor_method"]
-            | null
-          two_factor_secret: string | null
           user_id: string
         }
         Insert: {
@@ -390,11 +49,6 @@ export type Database = {
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           school_id?: string | null
-          two_factor_enabled?: boolean | null
-          two_factor_method?:
-            | Database["public"]["Enums"]["two_factor_method"]
-            | null
-          two_factor_secret?: string | null
           user_id: string
         }
         Update: {
@@ -402,11 +56,6 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           school_id?: string | null
-          two_factor_enabled?: boolean | null
-          two_factor_method?:
-            | Database["public"]["Enums"]["two_factor_method"]
-            | null
-          two_factor_secret?: string | null
           user_id?: string
         }
         Relationships: [
@@ -415,13 +64,6 @@ export type Database = {
             columns: ["school_id"]
             isOneToOne: false
             referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "auth_users_view"
             referencedColumns: ["id"]
           },
         ]
@@ -448,12 +90,11 @@ export type Database = {
       }
     }
     Functions: {
-      has_role: {
+      create_school_schema: {
         Args: {
-          user_id: string
-          role: Database["public"]["Enums"]["app_role"]
+          schema_name: string
         }
-        Returns: boolean
+        Returns: undefined
       }
       is_school_admin_for_school: {
         Args: {
@@ -485,8 +126,6 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "school_admin" | "teacher" | "student"
-      feature_access: "no_access" | "read" | "write" | "full_access"
-      two_factor_method: "sms" | "email" | "authenticator"
     }
     CompositeTypes: {
       [_ in never]: never

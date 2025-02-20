@@ -12,14 +12,15 @@ import { RoleAccessForm } from "@/components/role/RoleAccessForm";
 import { useUserRole } from "@/hooks/useUserRole";
 import type { Database } from "@/integrations/supabase/types";
 
-type UserDetails = Database["public"]["Tables"]["user_details"]["Row"] & {
-  user_roles: {
-    role: Database["public"]["Enums"]["app_role"];
-    school_id: string;
-  };
-  schools: {
+type UserRole = {
+  id: string;
+  user_id: string;
+  role: Database["public"]["Enums"]["app_role"];
+  school_id: string | null;
+  created_at: string;
+  school?: {
     school_name: string;
-  }[];
+  };
 };
 
 const AdminUsers = () => {
@@ -49,14 +50,10 @@ const AdminUsers = () => {
       if (!session) return [];
 
       let query = supabase
-        .from('user_details')
+        .from('user_roles')
         .select(`
           *,
-          user_roles!inner (
-            role,
-            school_id
-          ),
-          schools!user_roles (
+          school:schools (
             school_name
           )
         `);
@@ -73,7 +70,14 @@ const AdminUsers = () => {
         throw error;
       }
 
-      return data as UserDetails[];
+      // Get user details from auth
+      const { data: authUsers } = await supabase.auth.admin.listUsers();
+      const userMap = new Map(authUsers?.users.map(user => [user.id, user]));
+
+      return (data as UserRole[]).map(role => ({
+        ...role,
+        userDetails: userMap.get(role.user_id)
+      }));
     },
     enabled: !!session && !!currentUserRole,
   });
@@ -111,26 +115,26 @@ const AdminUsers = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>School</TableHead>
-                  <TableHead>Phone</TableHead>
+                  <TableHead>Created At</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>{user.name || 'N/A'}</TableCell>
-                    <TableCell>{user.user_id || 'N/A'}</TableCell>
+                {users.map((userRole) => (
+                  <TableRow key={userRole.id}>
+                    <TableCell>{userRole.userDetails?.email || 'N/A'}</TableCell>
                     <TableCell className="capitalize">
-                      {user.user_roles?.role?.replace('_', ' ') || 'N/A'}
+                      {userRole.role.replace('_', ' ')}
                     </TableCell>
                     <TableCell>
-                      {user.schools?.[0]?.school_name || 'N/A'}
+                      {userRole.school?.school_name || 'N/A'}
                     </TableCell>
-                    <TableCell>{user.phone || 'N/A'}</TableCell>
+                    <TableCell>
+                      {new Date(userRole.created_at).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>
                       <Dialog>
                         <DialogTrigger asChild>
@@ -140,10 +144,10 @@ const AdminUsers = () => {
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl">
                           <DialogHeader>
-                            <DialogTitle>Edit User</DialogTitle>
+                            <DialogTitle>Edit User Role</DialogTitle>
                           </DialogHeader>
                           <RoleAccessForm 
-                            initialData={user} 
+                            initialData={userRole} 
                             onSuccess={() => refetch()} 
                           />
                         </DialogContent>
