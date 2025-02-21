@@ -9,101 +9,16 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      schools: {
-        Row: {
-          created_at: string
-          id: string
-          schema_name: string
-          school_code: string
-          school_name: string
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          schema_name: string
-          school_code: string
-          school_name: string
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          schema_name?: string
-          school_code?: string
-          school_name?: string
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          school_id: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          school_id?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          school_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      create_school_schema: {
-        Args: {
-          schema_name: string
-        }
-        Returns: undefined
-      }
-      is_school_admin_for_school: {
-        Args: {
-          admin_id: string
-          school_id: string
-        }
-        Returns: boolean
-      }
-      is_super_admin: {
-        Args: {
-          user_id: string
-        }
-        Returns: boolean
-      }
-      set_schema: {
-        Args: {
-          schema_name: string
-        }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "super_admin" | "school_admin" | "teacher" | "student"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
