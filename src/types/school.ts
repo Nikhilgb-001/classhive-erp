@@ -2,15 +2,14 @@
 export interface SchoolFormData {
   schoolName: string;
   schoolCode: string;
-  schoolAddress: string;
-  adminName: string;
-  adminEmail: string;
-  adminPhone: string;
-  billingContactName: string;
-  billingPhone: string;
-  billingEmail: string;
-  founderName: string;
-  founderPhone: string;
-  logoUrl?: string;
-  schemaName?: string;
+}
+
+export interface School {
+  id: string;
+  school_name: string;
+  school_code: string;
+  schema_name: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }

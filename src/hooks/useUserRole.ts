@@ -42,17 +42,6 @@ export const useUserRole = () => {
               localStorage.setItem('schoolId', data.school_id);
             }
           }
-        } else {
-          // Check for teacher/student role in localStorage
-          const userRole = localStorage.getItem('userRole');
-          const schoolId = localStorage.getItem('schoolId');
-          
-          if (userRole && schoolId) {
-            setRoleData({
-              role: userRole as AppRole,
-              schoolId
-            });
-          }
         }
       } catch (error) {
         console.error('Error in useUserRole:', error);
@@ -68,7 +57,6 @@ export const useUserRole = () => {
       if (!session) {
         setRoleData({ role: null, schoolId: null });
         localStorage.removeItem('schoolId');
-        localStorage.removeItem('userRole');
       }
     });
 

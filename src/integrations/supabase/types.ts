@@ -11,54 +11,27 @@ export type Database = {
     Tables: {
       schools: {
         Row: {
-          admin_email: string | null
-          admin_name: string | null
-          admin_phone: string | null
-          billing_contact_name: string | null
-          billing_email: string | null
-          billing_phone: string | null
           created_at: string
-          founder_name: string | null
-          founder_phone: string | null
           id: string
           schema_name: string
-          school_address: string | null
           school_code: string
           school_name: string
           status: string | null
           updated_at: string
         }
         Insert: {
-          admin_email?: string | null
-          admin_name?: string | null
-          admin_phone?: string | null
-          billing_contact_name?: string | null
-          billing_email?: string | null
-          billing_phone?: string | null
           created_at?: string
-          founder_name?: string | null
-          founder_phone?: string | null
           id?: string
           schema_name: string
-          school_address?: string | null
           school_code: string
           school_name: string
           status?: string | null
           updated_at?: string
         }
         Update: {
-          admin_email?: string | null
-          admin_name?: string | null
-          admin_phone?: string | null
-          billing_contact_name?: string | null
-          billing_email?: string | null
-          billing_phone?: string | null
           created_at?: string
-          founder_name?: string | null
-          founder_phone?: string | null
           id?: string
           schema_name?: string
-          school_address?: string | null
           school_code?: string
           school_name?: string
           status?: string | null
@@ -100,24 +73,7 @@ export type Database = {
       }
     }
     Views: {
-      auth_users_view: {
-        Row: {
-          email: string | null
-          id: string | null
-          raw_user_meta_data: Json | null
-        }
-        Insert: {
-          email?: string | null
-          id?: string | null
-          raw_user_meta_data?: Json | null
-        }
-        Update: {
-          email?: string | null
-          id?: string | null
-          raw_user_meta_data?: Json | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       create_school_schema: {
@@ -138,14 +94,6 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
-      }
-      log_audit_event: {
-        Args: {
-          p_event_type: string
-          p_details: Json
-          p_ip_address?: string
-        }
-        Returns: string
       }
       set_schema: {
         Args: {
