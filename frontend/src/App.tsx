@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import SchoolAdmin from "./pages/school-admin/SchoolAdmin";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -19,7 +20,8 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="*" element={<NotFound />} />
+            {/* <Route path="*" element={<NotFound />} /> */}
+            <Route path="/school-admin" element={<SchoolAdmin />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
